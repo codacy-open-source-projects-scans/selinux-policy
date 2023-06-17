@@ -57,7 +57,7 @@ allow insights_client_t self:netlink_selinux_socket create_socket_perms;
 allow insights_client_t self:netlink_tcpdiag_socket create_netlink_socket_perms;
 allow insights_client_t self:packet_socket create_socket_perms;
 allow insights_client_t self:passwd rootok;
-allow insights_client_t self:process { getattr setfscreate setpgid setrlimit setsched };
+allow insights_client_t self:process { getattr getsession setfscreate setpgid setrlimit setsched };
 allow insights_client_t self:tcp_socket create_socket_perms;
 allow insights_client_t self:udp_socket create_socket_perms;
 allow insights_client_t self:unix_dgram_socket create_socket_perms;
@@ -89,7 +89,9 @@ files_pid_filetrans(insights_client_t, insights_client_var_run_t, { dir file })
 
 manage_dirs_pattern(insights_client_t, insights_client_tmp_t, insights_client_tmp_t)
 manage_files_pattern(insights_client_t, insights_client_tmp_t, insights_client_tmp_t)
-files_tmp_filetrans(insights_client_t, insights_client_tmp_t, { dir file })
+manage_fifo_files_pattern(insights_client_t, insights_client_tmp_t, insights_client_tmp_t)
+manage_sock_files_pattern(insights_client_t, insights_client_tmp_t, insights_client_tmp_t)
+files_tmp_filetrans(insights_client_t, insights_client_tmp_t, { dir file fifo_file sock_file })
 allow insights_client_t insights_client_tmp_t:dir relabel_dir_perms;
 allow insights_client_t insights_client_tmp_t:file relabel_dir_perms;
 
@@ -149,6 +151,7 @@ files_getattr_all_pipes(insights_client_t)
 files_getattr_all_sockets(insights_client_t)
 files_manage_etc_symlinks(insights_client_t)
 files_manage_generic_locks(insights_client_t)
+files_map_non_security_files(insights_client_t)
 files_map_read_etc_files(insights_client_t)
 files_read_non_security_files(insights_client_t)
 files_read_all_symlinks(insights_client_t)
@@ -285,6 +288,7 @@ optional_policy(`
 
 optional_policy(`
 	logging_domtrans_auditctl(insights_client_t)
+	logging_mmap_generic_logs(insights_client_t)
 	logging_mmap_journal(insights_client_t)
 	logging_read_audit_config(insights_client_t)
 	logging_read_audit_log(insights_client_t)
