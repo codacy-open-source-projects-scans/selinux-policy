@@ -1623,6 +1623,25 @@ interface(`files_dontaudit_read_all_sockets',`
 
 ########################################
 ## <summary>
+##	Do not audit attempts to execute
+##	any named socket.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain to not audit.
+##	</summary>
+## </param>
+#
+interface(`files_dontaudit_execute_all_sockets',`
+	gen_require(`
+		attribute file_type;
+	')
+
+	dontaudit $1 file_type:sock_file execute;
+')
+
+########################################
+## <summary>
 ##	Do not audit attempts to read
 ##	of all security file types.
 ## </summary>
@@ -2012,6 +2031,25 @@ interface(`files_remount_all_file_type_fs',`
 	')
 
 	allow $1 file_type:filesystem remount;
+')
+
+########################################
+## <summary>
+##	Get attributes of all non-authentication related
+##	directories.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`files_getattr_non_auth_dirs',`
+	gen_require(`
+		attribute non_auth_file_type;
+	')
+
+	allow $1 non_auth_file_type:dir getattr_dir_perms;
 ')
 
 ########################################

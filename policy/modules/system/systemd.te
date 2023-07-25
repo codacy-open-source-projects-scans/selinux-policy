@@ -692,6 +692,7 @@ files_map_system_db_files(systemd_tmpfiles_t)
 mls_file_read_all_levels(systemd_tmpfiles_t)
 mls_file_write_all_levels(systemd_tmpfiles_t)
 mls_file_upgrade(systemd_tmpfiles_t)
+mls_file_downgrade(systemd_tmpfiles_t)
 
 selinux_get_enforce_mode(systemd_tmpfiles_t)
 selinux_setcheckreqprot(systemd_tmpfiles_t)
@@ -1215,6 +1216,10 @@ init_named_pid_filetrans(systemd_network_generator_t, net_conf_t, dir, "network"
 
 sysnet_manage_config(systemd_network_generator_t)
 sysnet_manage_config_dirs(systemd_network_generator_t)
+
+optional_policy(`
+	logging_send_syslog_msg(systemd_network_generator_t)
+')
 
 #######################################
 #
