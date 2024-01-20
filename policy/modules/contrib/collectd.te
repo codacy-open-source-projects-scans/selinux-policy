@@ -101,6 +101,8 @@ init_read_utmp(collectd_t)
 
 logging_send_syslog_msg(collectd_t)
 
+storage_raw_read_fixed_disk_blk_device(collectd_t)
+
 sysnet_dns_name_resolve(collectd_t)
 
 tunable_policy(`use_ecryptfs_home_dirs',`
@@ -135,6 +137,10 @@ optional_policy(`
 
 optional_policy(`
     snmp_read_snmp_var_lib_dirs(collectd_t)
+')
+
+optional_policy(`
+	udev_read_pid_files(collectd_t)
 ')
 
 optional_policy(`
