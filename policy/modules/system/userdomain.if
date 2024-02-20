@@ -1760,7 +1760,7 @@ template(`userdom_admin_user_template',`
 
 	storage_raw_read_removable_device($1_t)
 	storage_raw_write_removable_device($1_t)
-	storage_dontaudit_read_fixed_disk($1_t)
+	storage_raw_rw_fixed_disk($1_t)
 
 	term_use_all_inherited_terms($1_t)
 	term_use_unallocated_ttys($1_t)
@@ -4231,6 +4231,52 @@ interface(`userdom_spec_domtrans_unpriv_users',`
 	allow unpriv_userdomain $1:fd use;
 	allow unpriv_userdomain $1:fifo_file rw_file_perms;
 	allow unpriv_userdomain $1:process sigchld;
+')
+
+########################################
+## <summary>
+##	Execute a shell in all admin user domains.  This
+##	is an explicit transition, requiring the
+##	caller to use setexeccon().
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed to transition.
+##	</summary>
+## </param>
+#
+interface(`userdom_spec_domtrans_admin_users',`
+	gen_require(`
+		attribute admindomain;
+	')
+
+	corecmd_shell_spec_domtrans($1, admindomain)
+	allow admindomain $1:fd use;
+	allow admindomain $1:fifo_file rw_file_perms;
+	allow admindomain $1:process sigchld;
+')
+
+########################################
+## <summary>
+##	Execute a shell in all confined admin user domains.  This
+##	is an explicit transition, requiring the
+##	caller to use setexeccon().
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed to transition.
+##	</summary>
+## </param>
+#
+interface(`userdom_spec_domtrans_confined_admin_users',`
+	gen_require(`
+		attribute confined_admindomain;
+	')
+
+	corecmd_shell_spec_domtrans($1, confined_admindomain)
+	allow confined_admindomain $1:fd use;
+	allow confined_admindomain $1:fifo_file rw_file_perms;
+	allow confined_admindomain $1:process sigchld;
 ')
 
 #####################################
