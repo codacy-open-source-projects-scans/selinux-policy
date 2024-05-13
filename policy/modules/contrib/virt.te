@@ -468,6 +468,7 @@ allow svirt_t virtqemud_var_run_t:file write;
 read_files_pattern(svirt_t, virtqemud_t, virtqemud_t)
 
 kernel_request_load_module(svirt_t)
+kernel_read_vm_sysctls(svirt_t)
 
 corenet_udp_sendrecv_generic_if(svirt_t)
 corenet_udp_sendrecv_generic_node(svirt_t)
@@ -1037,7 +1038,7 @@ read_lnk_files_pattern(virt_domain, svirt_image_t, svirt_image_t)
 rw_chr_files_pattern(virt_domain, svirt_image_t, svirt_image_t)
 rw_blk_files_pattern(virt_domain, svirt_image_t, svirt_image_t)
 fs_hugetlbfs_filetrans(virt_domain, svirt_image_t, file)
-allow svirt_t svirt_image_t:file map;
+allow virt_domain svirt_image_t:file map;
 allow svirt_t svirt_image_t:blk_file map;
 allow svirt_t svirt_image_t:chr_file map;
 
@@ -1171,6 +1172,7 @@ tunable_policy(`virt_use_samba',`
 ')
 
 tunable_policy(`virt_use_usb',`
+	dev_rw_generic_usb_dev(virt_domain)
 	dev_rw_usbfs(virt_domain)
 	dev_read_sysfs(virt_domain)
 	fs_getattr_dos_fs(virt_domain)
@@ -1933,6 +1935,7 @@ corecmd_exec_shell(virtnodedevd_t)
 
 dev_rw_mtrr(virtnodedevd_t)
 
+files_map_var_lib_files(virtnodedevd_t)
 files_watch_etc_dirs(virtnodedevd_t)
 
 miscfiles_read_hwdata(virtnodedevd_t)
@@ -2038,8 +2041,8 @@ allow virtqemud_t virt_var_run_t:file map;
 allow virtqemud_t virtlogd_t:fifo_file rw_inherited_fifo_file_perms;
 allow virtqemud_t virtlogd_t:unix_stream_socket connectto;
 
-create_lnk_files_pattern(virtnetworkd_t, virt_etc_rw_t, virt_etc_rw_t)
-delete_lnk_files_pattern(virtnetworkd_t, virt_etc_rw_t, virt_etc_rw_t)
+create_lnk_files_pattern(virtqemud_t, virt_etc_rw_t, virt_etc_rw_t)
+delete_lnk_files_pattern(virtqemud_t, virt_etc_rw_t, virt_etc_rw_t)
 
 manage_files_pattern(virtqemud_t, virtqemud_lock_t, virtqemud_lock_t)
 files_lock_filetrans(virtqemud_t, virtqemud_lock_t, file)
@@ -2097,6 +2100,7 @@ dev_delete_urand(virtqemud_t)
 dev_read_cpuid(virtqemud_t)
 dev_read_sysfs(virtqemud_t)
 dev_read_urand(virtqemud_t)
+dev_rw_vfio_dev(virtqemud_t)
 dev_relabel_all_dev_nodes(virtqemud_t)
 dev_rw_kvm(virtqemud_t)
 dev_rw_lvm_control(virtqemud_t)
@@ -2106,7 +2110,11 @@ files_mounton_non_security(virtqemud_t)
 files_read_all_symlinks(virtqemud_t)
 
 fs_getattr_cgroup(virtqemud_t)
+fs_getattr_cifs(virtqemud_t)
 fs_getattr_hugetlbfs(virtqemud_t)
+fs_getattr_nfs(virtqemud_t)
+fs_getattr_tmpfs(virtqemud_t)
+fs_getattr_xattr_fs(virtqemud_t)
 fs_delete_tmpfs_files(virtqemud_t)
 fs_manage_hugetlbfs_dirs(virtqemud_t)
 fs_manage_cgroup_dirs(virtqemud_t)
@@ -2203,6 +2211,8 @@ manage_files_pattern(virtstoraged_t, virt_var_lib_t, virt_var_lib_t)
 
 manage_lnk_files_pattern(virtstoraged_t, virt_etc_rw_t, virt_etc_rw_t)
 
+kernel_io_uring_use(virtstoraged_t)
+
 corecmd_exec_bin(virtstoraged_t)
 
 fs_getattr_all_fs(virtstoraged_t)
@@ -2211,6 +2221,10 @@ userdom_read_user_home_content_files(virtstoraged_t)
 
 optional_policy(`
 	dnsmasq_filetrans_named_content_fromdir(virtstoraged_t, virtstoraged_var_run_t)
+')
+
+optional_policy(`
+	lvm_domtrans(virtstoraged_t)
 ')
 
 #######################################
