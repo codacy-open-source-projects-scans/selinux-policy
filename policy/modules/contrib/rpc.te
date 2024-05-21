@@ -167,6 +167,8 @@ kernel_signal(rpcd_t)
 
 corecmd_exec_bin(rpcd_t)
 
+dev_rw_crypto(rpcd_t)
+
 files_manage_mounttab(rpcd_t)
 files_getattr_all_dirs(rpcd_t)
 
@@ -455,6 +457,8 @@ allow nfsidmap_t self:netlink_route_socket r_netlink_socket_perms;
 allow nfsidmap_t self:udp_socket create_socket_perms;
 
 kernel_setattr_key(nfsidmap_t)
+
+init_stream_connectto(nfsidmap_t)
 
 sysnet_read_config(nfsidmap_t)
 
