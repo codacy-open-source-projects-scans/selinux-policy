@@ -364,6 +364,10 @@ optional_policy(`
 ')
 
 optional_policy(`
+	systemd_nsresourced_stream_connect(abrt_t)
+')
+
+optional_policy(`
 	xserver_read_log(abrt_t)
 ')
 
@@ -597,6 +601,7 @@ optional_policy(`
 
 optional_policy(`
 	systemd_machined_stream_connect(abrt_dump_oops_t)
+	systemd_nsresourced_stream_connect(abrt_dump_oops_t)
 	systemd_userdbd_stream_connect(abrt_dump_oops_t)
 ')
 
@@ -690,7 +695,5 @@ optional_policy(`
 
 allow abrt_domain abrt_var_run_t:sock_file write_sock_file_perms;
 allow abrt_domain abrt_var_run_t:unix_stream_socket connectto;
-
-dev_rw_crypto(abrt_domain)
 
 files_read_etc_files(abrt_domain)

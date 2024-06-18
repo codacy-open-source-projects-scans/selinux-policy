@@ -328,7 +328,6 @@ dev_getattr_all_blk_files(systemd_logind_t)
 dev_rw_sysfs(systemd_logind_t)
 dev_rw_input_dev(systemd_logind_t)
 dev_rw_dri(systemd_logind_t)
-dev_rw_crypto(systemd_logind_t)
 dev_setattr_all_chr_files(systemd_logind_t)
 dev_setattr_dri_dev(systemd_logind_t)
 dev_setattr_generic_usb_dev(systemd_logind_t)
@@ -491,6 +490,7 @@ allow systemd_machined_t self:cap_userns { setgid setuid sys_admin sys_chroot sy
 manage_dirs_pattern(systemd_machined_t, systemd_machined_var_run_t, systemd_machined_var_run_t)
 manage_files_pattern(systemd_machined_t, systemd_machined_var_run_t, systemd_machined_var_run_t)
 manage_lnk_files_pattern(systemd_machined_t, systemd_machined_var_run_t, systemd_machined_var_run_t)
+manage_sock_files_pattern(systemd_machined_t, systemd_machined_var_run_t, systemd_machined_var_run_t)
 init_pid_filetrans(systemd_machined_t, systemd_machined_var_run_t, dir, "machines")
 init_pid_filetrans(systemd_machined_t, systemd_machined_var_run_t, dir, "machine")
 
@@ -511,7 +511,7 @@ files_write_root_dirs(systemd_machined_t)
 
 fs_read_nsfs_files(systemd_machined_t)
 fs_read_tmpfs_symlinks(systemd_machined_t)
-fs_write_cgroup_files(systemd_machined_t)
+fs_cgroup_write_memory_pressure(systemd_machined_t)
 fs_write_tmpfs_socket_files(systemd_machined_t)
 
 init_dbus_chat(systemd_machined_t)
@@ -609,7 +609,7 @@ corenet_udp_bind_dhcpd_port(systemd_networkd_t)
 
 fs_read_xenfs_files(systemd_networkd_t)
 fs_read_nsfs_files(systemd_networkd_t)
-fs_write_cgroup_files(systemd_networkd_t)
+fs_cgroup_write_memory_pressure(systemd_networkd_t)
 
 dev_read_sysfs(systemd_networkd_t)
 dev_write_kmsg(systemd_networkd_t)
@@ -955,7 +955,6 @@ kernel_read_sysctl(systemd_hostnamed_t)
 dev_read_vsock(systemd_hostnamed_t)
 dev_write_kmsg(systemd_hostnamed_t)
 dev_read_sysfs(systemd_hostnamed_t)
-dev_rw_crypto(systemd_hostnamed_t)
 
 fs_read_xenfs_files(systemd_hostnamed_t)
 
@@ -1086,8 +1085,8 @@ dev_read_sysfs(systemd_timedated_t)
 
 files_watch_var_run_path(systemd_timedated_t)
 
+fs_cgroup_write_memory_pressure(systemd_timedated_t)
 fs_getattr_xattr_fs(systemd_timedated_t)
-fs_write_cgroup_files(systemd_timedated_t)
 
 init_dbus_chat(systemd_timedated_t)
 init_status(systemd_timedated_t)
@@ -1174,7 +1173,6 @@ kernel_write_security_state(systemd_sysctl_t)
 files_read_system_conf_files(systemd_sysctl_t)
 
 dev_write_kmsg(systemd_sysctl_t)
-dev_rw_crypto(systemd_sysctl_t)
 
 domain_use_interactive_fds(systemd_sysctl_t)
 
@@ -1193,7 +1191,7 @@ systemd_read_efivarfs(systemd_sysctl_t)
 # sys_ptrace - to read /proc/<pid>/exe of the dumped process
 # setgid setuid - to set own credentials to match the dumped process credentials
 # setpcap - to drop capabilities
-allow systemd_coredump_t self:capability { dac_read_search net_admin setgid setpcap setuid sys_ptrace };
+allow systemd_coredump_t self:capability { dac_read_search net_admin setgid setpcap setuid sys_admin sys_ptrace sys_resource };
 allow systemd_coredump_t self:cap_userns { dac_read_search dac_override sys_admin sys_ptrace };
 
 # To set its capability set
@@ -1225,7 +1223,7 @@ files_map_non_security_files(systemd_coredump_t)
 files_mounton_rootfs(systemd_coredump_t)
 files_mounton_usr(systemd_coredump_t)
 
-fs_getattr_nsfs_files(systemd_coredump_t)
+fs_read_nsfs_files(systemd_coredump_t)
 
 optional_policy(`
 	logging_send_syslog_msg(systemd_coredump_t)
@@ -1241,9 +1239,11 @@ manage_files_pattern(systemd_hwdb_t, systemd_hwdb_etc_t, systemd_hwdb_etc_t)
 allow systemd_hwdb_t systemd_hwdb_etc_t:file {relabelfrom relabelto};
 files_etc_filetrans(systemd_hwdb_t, systemd_hwdb_etc_t, file)
 
-systemd_read_efivarfs(systemd_hwdb_t)
+dev_write_kmsg(systemd_hwdb_t)
 
 kernel_dgram_send(systemd_hwdb_t)
+
+systemd_read_efivarfs(systemd_hwdb_t)
 
 ########################################
 #
@@ -1253,8 +1253,6 @@ kernel_dgram_send(systemd_hwdb_t)
 ### Common rules for systemd generators
 allow systemd_generator self:unix_dgram_socket { create_socket_perms sendto };
 
-dev_rw_crypto(systemd_generator)
-dev_write_kmsg(systemd_generator)
 fs_getattr_cgroup(systemd_generator)
 fs_search_cgroup_dirs(systemd_generator)
 kernel_read_proc_files(systemd_generator)
@@ -1275,12 +1273,14 @@ allow systemd_fstab_generator_t self:process setfscreate;
 
 create_lnk_files_pattern(systemd_fstab_generator_t, systemd_unit_file_type, systemd_unit_file_type)
 
+dev_write_kmsg(systemd_fstab_generator_t)
 dev_write_sysfs_dirs(systemd_fstab_generator_t)
 
 files_read_all_mountpoint_symlinks(systemd_fstab_generator_t)
 files_search_all_mountpoints(systemd_fstab_generator_t)
 
 fs_getattr_dos_dirs(systemd_fstab_generator_t)
+fs_read_tmpfs_files(systemd_fstab_generator_t)
 
 optional_policy(`
 	fstools_exec(systemd_fstab_generator_t)
@@ -1352,9 +1352,13 @@ dev_list_sysfs(systemd_tpm2_generator_t)
 
 ### zram generator
 allow systemd_zram_generator_t systemd_fstab_generator_unit_file_t:file write_file_perms;
+permissive systemd_zram_generator_t;
+
+filetrans_pattern(systemd_zram_generator_t, systemd_unit_file_t, systemd_zram_generator_unit_file_t, dir, "systemd-zram-setup@zram0.service.d")
+
 dev_create_sysfs_files(systemd_zram_generator_t)
 dev_rw_sysfs(systemd_zram_generator_t)
-permissive systemd_zram_generator_t;
+dev_write_kmsg(systemd_zram_generator_t)
 
 # for systemd-detect-virt - needs to be confined
 corecmd_exec_bin(systemd_zram_generator_t)
@@ -1368,6 +1372,13 @@ optional_policy(`
 optional_policy(`
 	modutils_domtrans_kmod(systemd_zram_generator_t)
 ')
+
+### Interactions between distinct systemd generator domains
+allow systemd_cryptsetup_generator_t systemd_fstab_generator_unit_file_t:dir search;
+
+create_files_pattern(systemd_fstab_generator_t, systemd_cryptsetup_generator_unit_file_t, systemd_cryptsetup_generator_unit_file_t)
+
+create_lnk_files_pattern(systemd_zram_generator_t, systemd_fstab_generator_unit_file_t, systemd_fstab_generator_unit_file_t)
 
 ### a generic generator
 permissive systemd_generic_generator_t;
@@ -1431,7 +1442,7 @@ files_watch_root_dirs(systemd_resolved_t)
 files_watch_tmpfs_dirs(systemd_resolved_t)
 files_watch_var_run_dirs(systemd_resolved_t)
 
-fs_write_cgroup_files(systemd_resolved_t)
+fs_cgroup_write_memory_pressure(systemd_resolved_t)
 
 init_watch_pid_dir(systemd_resolved_t)
 
@@ -1613,7 +1624,6 @@ manage_sock_files_pattern(systemd_importd_t, systemd_importd_var_run_t, systemd_
 init_pid_filetrans(systemd_importd_t, systemd_importd_var_run_t, dir)
 
 manage_files_pattern(systemd_importd_t, systemd_machined_var_run_t, systemd_machined_var_run_t)
-manage_sock_files_pattern(systemd_importd_t, systemd_machined_var_run_t, systemd_machined_var_run_t)
 init_named_pid_filetrans(systemd_importd_t, systemd_machined_var_run_t, file, "machines.lock")
 
 manage_dirs_pattern(systemd_importd_t, systemd_importd_tmp_t, systemd_importd_tmp_t)
@@ -1639,9 +1649,8 @@ miscfiles_read_certs(systemd_importd_t)
 
 sysnet_read_config(systemd_importd_t)
 
-optional_policy(`
-    systemd_machined_manage_lib_files(systemd_importd_t)
-')
+systemd_machined_manage_lib_files(systemd_importd_t)
+systemd_nsresourced_stream_connect(systemd_importd_t)
 
 optional_policy(`
     dbus_system_bus_client(systemd_importd_t)
@@ -1668,17 +1677,18 @@ init_named_pid_filetrans(systemd_userdbd_t, systemd_userdbd_runtime_t, dir, "use
 
 kernel_dgram_send(systemd_userdbd_t)
 
-fs_write_cgroup_files(systemd_userdbd_t)
-
 auth_read_shadow(systemd_userdbd_t)
 auth_use_nsswitch(systemd_userdbd_t)
 
 can_exec(systemd_userdbd_t systemd_userdbd_exec_t)
 
+fs_cgroup_write_memory_pressure(systemd_userdbd_t)
+
 init_stream_connectto(systemd_userdbd_t)
 
 logging_send_syslog_msg(systemd_userdbd_t)
 
+systemd_nsresourced_stream_connect(systemd_userdbd_t)
 systemd_read_efivarfs(systemd_userdbd_t)
 
 ########################################
@@ -1782,6 +1792,7 @@ kernel_dgram_send(systemd_nsresourced_t)
 
 dev_read_sysfs(systemd_nsresourced_t)
 
+fs_cgroup_write_memory_pressure(systemd_nsresourced_t)
 fs_manage_bpf_dirs(systemd_nsresourced_t)
 fs_manage_bpf_files(systemd_nsresourced_t)
 

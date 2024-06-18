@@ -253,7 +253,7 @@ files_read_etc_files(groupadd_t)
 files_read_etc_runtime_files(groupadd_t)
 files_read_usr_symlinks(groupadd_t)
 
-# Execute /usr/bin/{passwd, chfn, chsh} and /usr/sbin/{useradd, vipw}.
+# Execute /usr/bin/{passwd, chfn, chsh} and /usr/bin/{useradd, vipw}.
 corecmd_exec_bin(groupadd_t)
 
 logging_send_audit_msgs(groupadd_t)
@@ -300,6 +300,10 @@ optional_policy(`
 	sssd_manage_public_files(groupadd_t)
 	sssd_read_pid_files(groupadd_t)
 	sssd_signal(groupadd_t)
+')
+
+optional_policy(`
+	systemd_nsresourced_stream_connect(groupadd_t)
 ')
 
 optional_policy(`
@@ -547,7 +551,7 @@ files_pid_filetrans(useradd_t, useradd_var_run_t, dir)
 kernel_read_kernel_sysctls(useradd_t)
 
 corecmd_exec_shell(useradd_t)
-# Execute /usr/bin/{passwd,chfn,chsh} and /usr/sbin/{useradd,vipw}.
+# Execute /usr/bin/{passwd,chfn,chsh} and /usr/bin/{useradd,vipw}.
 corecmd_exec_bin(useradd_t)
 
 kernel_getattr_core_if(useradd_t)
@@ -677,4 +681,8 @@ optional_policy(`
 
 optional_policy(`
 	stapserver_manage_lib(useradd_t)
+')
+
+optional_policy(`
+	systemd_nsresourced_stream_connect(useradd_t)
 ')

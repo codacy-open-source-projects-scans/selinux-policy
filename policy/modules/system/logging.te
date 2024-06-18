@@ -275,6 +275,7 @@ mls_socket_write_all_levels(auditd_t)
 
 sysnet_dns_name_resolve(auditd_t)
 
+systemd_nsresourced_stream_connect(auditd_t)
 systemd_start_systemd_services(auditd_t)
 systemd_start_power_services(auditd_t)
 systemd_status_power_services(auditd_t)
@@ -658,7 +659,7 @@ fs_getattr_all_fs(syslogd_t)
 fs_read_efivarfs_files(syslogd_t)
 fs_search_auto_mountpoints(syslogd_t)
 fs_list_cgroup_dirs(syslogd_t)
-fs_write_cgroup_files(syslogd_t)
+fs_cgroup_write_memory_pressure(syslogd_t)
 
 miscfiles_manage_generic_cert_files(syslogd_t)
 
