@@ -275,7 +275,6 @@ mls_socket_write_all_levels(auditd_t)
 
 sysnet_dns_name_resolve(auditd_t)
 
-systemd_nsresourced_stream_connect(auditd_t)
 systemd_start_systemd_services(auditd_t)
 systemd_start_power_services(auditd_t)
 systemd_status_power_services(auditd_t)
@@ -653,6 +652,7 @@ files_read_etc_runtime_files(syslogd_t)
 files_dontaudit_search_isid_type_dirs(syslogd_t)
 files_dontaudit_list_var(syslogd_t)
 files_read_kernel_symbol_table(syslogd_t)
+files_var_filetrans(syslogd_t, var_log_t, dir, "log")
 files_var_lib_filetrans(syslogd_t, syslogd_var_lib_t, { file dir })
 
 fs_getattr_all_fs(syslogd_t)
