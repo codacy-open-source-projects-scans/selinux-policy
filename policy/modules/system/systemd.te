@@ -1272,9 +1272,13 @@ allow systemd_generator systemd_unit_file_t:lnk_file manage_lnk_file_perms;
 allow systemd_generator systemd_unit_file_type:file getattr_file_perms;
 allow systemd_generator systemd_unit_file_type:lnk_file getattr_lnk_file_perms;
 
-fs_getattr_cgroup(systemd_generator)
-fs_search_cgroup_dirs(systemd_generator)
 kernel_read_proc_files(systemd_generator)
+
+dev_write_kmsg(systemd_generator)
+files_map_etc_files(systemd_generator)
+fs_getattr_all_fs(systemd_generator)
+fs_search_cgroup_dirs(systemd_generator)
+init_read_state(systemd_generator)
 
 ### Rules for individual systemd generator domains
 
@@ -1282,14 +1286,14 @@ kernel_read_proc_files(systemd_generator)
 fs_read_efivarfs_files(systemd_bless_boot_generator_t)
 
 ### cryptsetup generator
-init_read_state(systemd_cryptsetup_generator_t)
+allow systemd_cryptsetup_generator_t systemd_fstab_generator_unit_file_t:file rw_file_perms;
 
 ### fstab generator
 allow systemd_fstab_generator_t self:capability { dac_override dac_read_search };
+allow systemd_fstab_generator_t systemd_cryptsetup_generator_unit_file_t:file rw_file_perms;
 
 create_lnk_files_pattern(systemd_fstab_generator_t, systemd_unit_file_type, systemd_unit_file_type)
 
-dev_write_kmsg(systemd_fstab_generator_t)
 dev_write_sysfs_dirs(systemd_fstab_generator_t)
 
 files_getattr_all_dirs(systemd_fstab_generator_t)
@@ -1304,7 +1308,8 @@ optional_policy(`
 
 ### getty generator
 dev_read_sysfs(systemd_getty_generator_t)
-term_open_unallocated_ttys(systemd_getty_generator_t)
+init_read_state(systemd_getty_generator_t)
+term_use_unallocated_ttys(systemd_getty_generator_t)
 
 ### gpt generator
 allow systemd_gpt_generator_t self:capability sys_rawio;
@@ -1312,7 +1317,6 @@ dontaudit systemd_gpt_generator_t self:capability sys_admin;
 allow systemd_gpt_generator_t self:netlink_kobject_uevent_socket create_socket_perms;
 
 dev_read_sysfs(systemd_gpt_generator_t)
-dev_write_kmsg(systemd_gpt_generator_t)
 dev_read_rand(systemd_gpt_generator_t)
 
 files_list_boot(systemd_gpt_generator_t)
@@ -1321,7 +1325,7 @@ files_list_tmp(systemd_gpt_generator_t)
 files_list_usr(systemd_gpt_generator_t)
 files_list_var(systemd_gpt_generator_t)
 
-fs_getattr_xattr_fs(systemd_gpt_generator_t)
+fs_getattr_dos_dirs(systemd_gpt_generator_t)
 fs_mount_tmpfs(systemd_gpt_generator_t)
 
 mls_file_read_to_clearance(systemd_gpt_generator_t)
@@ -1368,7 +1372,6 @@ filetrans_pattern(systemd_zram_generator_t, systemd_unit_file_t, systemd_zram_ge
 
 dev_create_sysfs_files(systemd_zram_generator_t)
 dev_rw_sysfs(systemd_zram_generator_t)
-dev_write_kmsg(systemd_zram_generator_t)
 
 # for systemd-detect-virt - needs to be confined
 corecmd_exec_bin(systemd_zram_generator_t)
@@ -1792,7 +1795,6 @@ allow systemd_nsresourced_t self:capability2 { bpf perfmon };
 allow systemd_nsresourced_t self:perf_event manage_perf_event_perms;
 allow systemd_nsresourced_t systemd_nsresourced_exec_t:file execute_no_trans;
 
-permissive systemd_nsresourced_t;
 #read_files_pattern(systemd_nsresourced_t, systemd_nsresourced_runtime_t, systemd_nsresourced_runtime_t)
 manage_dirs_pattern(systemd_nsresourced_t, systemd_nsresourced_runtime_t, systemd_nsresourced_runtime_t)
 
