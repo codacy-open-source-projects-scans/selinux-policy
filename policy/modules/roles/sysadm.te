@@ -24,11 +24,13 @@ allow sysadm_t self:system all_system_perms;
 #
 # Local policy
 #
+kernel_io_uring_use(sysadm_t)
 kernel_manage_perf_event(sysadm_t)
 kernel_prog_run_bpf(sysadm_t)
 kernel_read_fs_sysctls(sysadm_t)
 kernel_read_all_proc(sysadm_t)
 kernel_secretmem_use(sysadm_t)
+kernel_kvm_gmem_use(sysadm_t)
 kernel_unconfined(sysadm_t)
 
 auth_manage_shadow(sysadm_t)
@@ -686,6 +688,7 @@ optional_policy(`
 ')
 
 optional_policy(`
+	virt_dbus_chat_dbus(sysadm_t)
 	virt_stream_connect(sysadm_t)
 	virt_filetrans_home_content(sysadm_t)
 	virt_manage_pid_dirs(sysadm_t)
