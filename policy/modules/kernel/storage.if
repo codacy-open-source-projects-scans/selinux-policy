@@ -565,6 +565,25 @@ interface(`storage_getattr_scsi_generic_dev',`
 
 ########################################
 ## <summary>
+##	Allow the caller to unlink the generic SCSI interface device nodes.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`storage_delete_scsi_generic_dev',`
+	gen_require(`
+		type scsi_generic_device_t;
+	')
+
+	allow $1 scsi_generic_device_t:chr_file delete_chr_file_perms;
+	dev_remove_entry_generic_dirs($1)
+')
+
+########################################
+## <summary>
 ##	Allow the caller to set the attributes of
 ##	the generic SCSI interface device nodes.
 ## </summary>
@@ -902,20 +921,20 @@ interface(`storage_dontaudit_raw_write_removable_device',`
 
 #######################################
 ## <summary>
-##  Alow read and write inherited removable devices.
+##	Allow the caller read/write inherited removable devices.
 ## </summary>
 ## <param name="domain">
-##  <summary>
-##  Domain to not audit.
-##  </summary>
+##	<summary>
+##	The domain allowed access.
+##	</summary>
 ## </param>
 #
 interface(`storage_rw_inherited_removable_device',`
-    gen_require(`
-        type removable_device_t;
-    ')
+	gen_require(`
+		type removable_device_t;
+	')
 
-    dontaudit $1 removable_device_t:blk_file { read write };
+	allow $1 removable_device_t:blk_file { read write };
 ')
 
 ########################################

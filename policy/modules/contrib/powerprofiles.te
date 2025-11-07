@@ -15,13 +15,17 @@ files_type(powerprofiles_var_lib_t);
 
 permissive powerprofiles_t;
 
+allow powerprofiles_t self:capability2 bpf;
 allow powerprofiles_t self:netlink_kobject_uevent_socket create_socket_perms;
 
 manage_files_pattern(powerprofiles_t, powerprofiles_var_lib_t, powerprofiles_var_lib_t)
 
 kernel_read_proc_files(powerprofiles_t)
 
-dev_read_sysfs(powerprofiles_t)
+dev_rw_sysfs(powerprofiles_t)
+dev_watch_sysfs_dirs(powerprofiles_t)
+
+fs_getattr_xattr_fs(powerprofiles_t)
 
 optional_policy(`
 	dbus_connect_system_bus(powerprofiles_t)
@@ -29,6 +33,10 @@ optional_policy(`
 
 	optional_policy(`
 		policykit_dbus_chat(powerprofiles_t)
+	')
+
+	optional_policy(`
+		xserver_dbus_chat_xdm(powerprofiles_t)
 	')
 ')
 

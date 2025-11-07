@@ -1291,6 +1291,7 @@ interface(`files_search_base_file_types',`
 	')
 
 	allow $1 base_file_type:dir search_dir_perms;
+	allow $1 base_file_type:lnk_file read_lnk_file_perms;
 ')
 
 ########################################
@@ -3566,6 +3567,24 @@ interface(`files_rw_boot_symlinks',`
 
 ########################################
 ## <summary>
+##	Delete symlinks in the /boot directory.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`files_delete_boot_symlinks',`
+	gen_require(`
+		type boot_t;
+	')
+
+	delete_files_pattern($1, boot_t, boot_t)
+')
+
+########################################
+## <summary>
 ##	Create, read, write, and delete symbolic links
 ##	in the /boot directory.
 ## </summary>
@@ -5582,6 +5601,7 @@ interface(`files_search_mnt',`
 	')
 
 	allow $1 mnt_t:dir search_dir_perms;
+	allow $1 mnt_t:lnk_file read_lnk_file_perms;
 ')
 
 ########################################
@@ -5672,6 +5692,24 @@ interface(`files_mounton_mnt',`
 	')
 
 	allow $1 mnt_t:dir { search_dir_perms mounton };
+')
+
+########################################
+## <summary>
+##	Watch a mnt directory.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`files_watch_mnt_dirs',`
+	gen_require(`
+		type mnt_t;
+	')
+
+	allow $1 mnt_t:dir watch_dir_perms;
 ')
 
 ########################################
@@ -6104,6 +6142,25 @@ interface(`files_manage_mdevctl_conf_files',`
 
 #######################################
 ## <summary>
+##	Create mdevctl configuration dirs
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`files_create_mdevctl_conf_dirs',`
+	gen_require(`
+		type mdevctl_conf_t;
+	')
+
+	files_search_etc(mdevctl_conf_t)
+	allow $1 mdevctl_conf_t:dir create_dir_perms;
+')
+
+#######################################
+## <summary>
 ##	Watch mdevctl configuration dirs
 ## </summary>
 ## <param name="domain">
@@ -6137,6 +6194,24 @@ interface(`files_etc_filetrans_mdevctl_conf',`
 	')
 
 	filetrans_pattern($1, etc_t, mdevctl_conf_t, dir, "mdevctl.d")
+')
+
+###################################
+## <summary>
+##	Create /etc/mdevctl.d/scripts.d with the bin_t type
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`files_etc_filetrans_mdevctl_conf_scripts',`
+	gen_require(`
+		type mdevctl_conf_t;
+	')
+
+	corecmd_bin_filetrans_to($1, mdevctl_conf_t, dir, "scripts.d")
 ')
 
 #######################################
@@ -10206,6 +10281,24 @@ interface(`files_delete_tmpfs_files',`
 
 ########################################
 ## <summary>
+##	Allow getattr all tmpfs files.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access
+##	</summary>
+## </param>
+#
+interface(`files_getattr_tmpfs_files',`
+	gen_require(`
+		attribute tmpfsfile;
+	')
+
+	allow $1 tmpfsfile:file getattr;
+')
+
+########################################
+## <summary>
 ##	Allow read write all tmpfs files
 ## </summary>
 ## <param name="domain">
@@ -10432,6 +10525,48 @@ interface(`files_dontaudit_write_all_files',`
 	')
 
 	dontaudit $1 file_type:dir_file_class_set write;
+')
+
+########################################
+## <summary>
+##	Do not audit attempts to unlink all files.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain to not audit.
+##	</summary>
+## </param>
+#
+interface(`files_dontaudit_delete_all_files',`
+	gen_require(`
+		attribute file_type;
+	')
+
+	dontaudit $1 file_type:dir { remove_name rmdir write };
+	dontaudit $1 file_type:file unlink;
+	dontaudit $1 file_type:lnk_file unlink;
+	dontaudit $1 file_type:fifo_file unlink;
+	dontaudit $1 file_type:sock_file unlink;
+	dontaudit $1 file_type:chr_file unlink;
+	dontaudit $1 file_type:blk_file unlink;
+')
+
+########################################
+## <summary>
+##	Do not audit attempts to list all directories.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain to not audit.
+##	</summary>
+## </param>
+#
+interface(`files_dontaudit_list_all_dirs',`
+	gen_require(`
+		attribute file_type;
+	')
+
+	dontaudit $1 file_type:dir list_dir_perms;
 ')
 
 ########################################

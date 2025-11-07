@@ -30,7 +30,9 @@ files_var_lib_filetrans(gnome_remote_desktop_t, gnome_remote_desktop_var_lib_t, 
 
 #============= gnome_remote_desktop_t ==============
 corenet_tcp_bind_gnome_remote_desktop_port(gnome_remote_desktop_t)
+allow gnome_remote_desktop_t self:netlink_route_socket r_netlink_socket_perms;
 allow gnome_remote_desktop_t self:tcp_socket create_stream_socket_perms;
+allow gnome_remote_desktop_t self:udp_socket create_socket_perms;
 allow gnome_remote_desktop_t self:unix_dgram_socket create_socket_perms;
 
 domain_use_interactive_fds(gnome_remote_desktop_t)
@@ -39,6 +41,7 @@ files_read_etc_files(gnome_remote_desktop_t)
 files_watch_etc_dirs(gnome_remote_desktop_t)
 
 corenet_tcp_bind_generic_node(gnome_remote_desktop_t)
+corenet_tcp_connect_unreserved_ports(gnome_remote_desktop_t)
 dev_read_sysfs(gnome_remote_desktop_t)
 files_watch_usr_dirs(gnome_remote_desktop_t)
 fs_getattr_cgroup(gnome_remote_desktop_t)
@@ -67,9 +70,17 @@ optional_policy(`
 ')
 
 optional_policy(`
+	sysnet_read_config(gnome_remote_desktop_t)
+')
+
+optional_policy(`
 	systemd_login_list_pid_dirs(gnome_remote_desktop_t)
 	systemd_login_read_pid_files(gnome_remote_desktop_t)
 	systemd_read_logind_sessions_files(gnome_remote_desktop_t)
+')
+
+optional_policy(`
+	tabrmd_dbus_chat(gnome_remote_desktop_t)
 ')
 
 optional_policy(`

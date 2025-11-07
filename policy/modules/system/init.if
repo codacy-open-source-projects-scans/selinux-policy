@@ -157,6 +157,24 @@ interface(`init_nnp_daemon_domain',`
 
 ########################################
 ## <summary>
+##	Allow nosuid_transition from systemd into a confined domain.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`init_nosuid_domain',`
+	gen_require(`
+		type init_t;
+	')
+
+	allow init_t $1:process2 nosuid_transition;
+')
+
+########################################
+## <summary>
 ##	Create a domain which can be started by init,
 ##	with a range transition.
 ## </summary>
@@ -472,9 +490,12 @@ interface(`init_ranged_system_domain',`
 interface(`init_explicit_domain',`
 	gen_require(`
 		type init_t;
+		attribute daemon, direct_init_entry;
 		role system_r;
 	')
 
+	typeattribute $1 daemon;
+	typeattribute $2 direct_init_entry;
 	role system_r types $1;
 
 	domain_type($1)
@@ -2943,6 +2964,42 @@ interface(`init_write_pid_socket',`
     allow $1 init_var_run_t:sock_file write;
 ')
 
+#######################################
+## <summary>
+##	Allow the specified domain to create init sock file.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`init_create_pid_socket',`
+	gen_require(`
+		type init_var_run_t;
+	')
+
+	allow $1 init_var_run_t:sock_file create;
+')
+
+#######################################
+## <summary>
+##	Allow the specified domain to unlink init sock file.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`init_unlink_pid_socket',`
+	gen_require(`
+		type init_var_run_t;
+	')
+
+	allow $1 init_var_run_t:sock_file unlink;
+')
+
 ########################################
 ## <summary>
 ##	Send a message to init over a unix domain
@@ -3448,7 +3505,6 @@ interface(`init_filetrans_named_content',`
 	')
 
 	files_pid_filetrans($1, initrc_var_run_t, file, "utmp")
-	files_pid_filetrans($1, init_var_run_t, file, "random-seed")
 	files_etc_filetrans($1, machineid_t, file, "machine-id" )
 	files_pid_filetrans($1, initctl_t, fifo_file, "fifo" )
 	init_pid_filetrans($1, systemd_unit_file_t, dir, "generator")

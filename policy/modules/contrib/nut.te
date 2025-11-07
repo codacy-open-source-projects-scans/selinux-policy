@@ -119,6 +119,7 @@ optional_policy(`
 optional_policy(`
 	systemd_read_logind_sessions_files(nut_upsmon_t)
 	systemd_start_power_services(nut_upsmon_t)
+	systemd_write_inhibit_pipes(nut_upsmon_t)
 ')
 
 ########################################
@@ -126,7 +127,7 @@ optional_policy(`
 # Local policy for upsdrvctl
 #
 
-allow nut_upsdrvctl_t self:capability { kill };
+allow nut_upsdrvctl_t self:capability { kill sys_ptrace };
 allow nut_upsdrvctl_t self:fd use;
 allow nut_upsdrvctl_t self:unix_dgram_socket { create_socket_perms sendto };
 allow nut_upsdrvctl_t self:udp_socket create_socket_perms;

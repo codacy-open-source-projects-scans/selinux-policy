@@ -43,6 +43,7 @@ allow thumb_t self:udp_socket create_socket_perms;
 allow thumb_t self:tcp_socket create_socket_perms;
 allow thumb_t self:shm create_shm_perms;
 allow thumb_t self:sem create_sem_perms;
+allow thumb_t self:user_namespace create;
 
 manage_dirs_pattern(thumb_t, thumb_home_t, thumb_home_t)
 manage_files_pattern(thumb_t, thumb_home_t, thumb_home_t)
@@ -63,7 +64,7 @@ userdom_user_tmp_filetrans(thumb_t, thumb_tmp_t, { file dir sock_file })
 manage_dirs_pattern(thumb_t, thumb_tmpfs_t, thumb_tmpfs_t)
 manage_files_pattern(thumb_t, thumb_tmpfs_t, thumb_tmpfs_t)
 fs_tmpfs_filetrans(thumb_t, thumb_tmpfs_t, { dir file })
-allow thumb_t thumb_tmpfs_t:file execute;
+allow thumb_t thumb_tmpfs_t:file { execute mounton };
 
 can_exec(thumb_t, thumb_exec_t)
 
@@ -81,6 +82,7 @@ dev_map_dri(thumb_t)
 dev_read_sysfs(thumb_t)
 dev_read_urand(thumb_t)
 dev_dontaudit_rw_dri(thumb_t)
+dev_rw_dma_dev(thumb_t)
 dev_rw_xserver_misc(thumb_t)
 dev_read_video_dev(thumb_t)
 dev_write_video_dev(thumb_t)
@@ -148,8 +150,8 @@ optional_policy(`
 ')
 
 optional_policy(`
-    dbus_exec_dbusd(thumb_t)
-    dbus_connect_session_bus(thumb_t)
+	dbus_exec_dbusd(thumb_t)
+	dbus_connect_session_bus(thumb_t)
 	dbus_stream_connect_session_bus(thumb_t)
 	dbus_chat_session_bus(thumb_t)
 	dbus_system_bus_client(thumb_t)
@@ -160,7 +162,7 @@ optional_policy(`
 	# .config
 	gnome_dontaudit_search_config(thumb_t)
 	gnome_dontaudit_write_config_files(thumb_t)
-    gnome_append_home_config(thumb_t)
+	gnome_append_home_config(thumb_t)
 	gnome_append_generic_cache_files(thumb_t)
 	gnome_read_generic_data_home_files(thumb_t)
 	gnome_dontaudit_rw_generic_cache_files(thumb_t)
@@ -168,8 +170,8 @@ optional_policy(`
 	gnome_manage_gstreamer_home_dirs(thumb_t)
 	gnome_exec_gstreamer_home_files(thumb_t)
 	gnome_create_generic_cache_dir(thumb_t)
-    gnome_setattr_cache_home_dir(thumb_t)
-    gnome_delete_generic_cache_files(thumb_t)
+	gnome_setattr_cache_home_dir(thumb_t)
+	gnome_delete_generic_cache_files(thumb_t)
 	gnome_cache_filetrans(thumb_t, thumb_home_t, dir, "thumbnails")
 	gnome_cache_filetrans(thumb_t, thumb_home_t, file)
 ')

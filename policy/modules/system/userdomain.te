@@ -53,7 +53,6 @@ attribute unpriv_userdomain;
 
 attribute user_home_content_type;
 
-attribute userdom_home_reader_certs_type;
 attribute userdom_home_reader_type;
 attribute userdom_home_manager_type;
 attribute userdom_filetrans_type;
@@ -213,19 +212,8 @@ optional_policy(`
 ')
 
 optional_policy(`
+	systemd_oomd_stream_connect(userdomain)
 	systemd_userdbd_stream_connect(userdomain)
-')
-
-# rules for types which can read home certs
-allow userdom_home_reader_certs_type home_cert_t:dir list_dir_perms;
-read_files_pattern(userdom_home_reader_certs_type, home_cert_t, home_cert_t)
-read_lnk_files_pattern(userdom_home_reader_certs_type, home_cert_t, home_cert_t)
-userdom_search_user_home_content(userdom_home_reader_certs_type)
-allow userdom_home_reader_certs_type home_cert_t:file map;
-
-tunable_policy(`use_ecryptfs_home_dirs',`
-    fs_read_ecryptfs_files(userdom_home_reader_certs_type)
-    fs_read_ecryptfs_symlinks(userdom_home_reader_certs_type)
 ')
 
 tunable_policy(`use_nfs_home_dirs',`
@@ -386,12 +374,14 @@ create_chr_files_pattern(login_userdomain, user_tmp_t, user_tmp_t )
 create_fifo_files_pattern(login_userdomain, user_tmp_t, user_tmp_t )
 create_files_pattern(login_userdomain, user_tmp_t, user_tmp_t )
 create_sock_files_pattern(login_userdomain, user_tmp_t, user_tmp_t )
+files_pid_filetrans(login_userdomain, user_tmp_t, dir, "tlog")
 
 tunable_policy(`deny_bluetooth',`',`
 	allow login_userdomain self:bluetooth_socket rw_stream_socket_perms;
 ')
 
 kernel_watch_unlabeled_dirs(login_userdomain)
+kernel_read_psi(login_userdomain)
 
 auth_watch_passwd(login_userdomain)
 
@@ -419,6 +409,7 @@ files_watch_generic_tmp_dirs(login_userdomain)
 
 fs_create_cgroup_files(login_userdomain)
 fs_cgroup_filetrans_memory_pressure(login_userdomain)
+fs_getattr_nsfs_files(login_userdomain)
 fs_watch_cgroup_files(login_userdomain)
 
 libs_watch_lib_dirs(login_userdomain)
@@ -438,6 +429,11 @@ optional_policy(`
 
 optional_policy(`
 	accountsd_watch_lib(login_userdomain)
+	accountsd_watch_lib_files(login_userdomain)
+')
+
+optional_policy(`
+	alsa_read_lib(login_userdomain)
 ')
 
 optional_policy(`
@@ -465,6 +461,8 @@ optional_policy(`
 optional_policy(`
 	logging_mmap_journal(login_userdomain)
 	logging_read_syslog_pid(login_userdomain)
+	logging_watch_generic_log_dirs(login_userdomain)
+	logging_watch_journal_dir(login_userdomain)
 ')
 
 optional_policy(`
@@ -489,6 +487,10 @@ optional_policy(`
 ')
 
 optional_policy(`
+	switcheroo_dbus_chat(login_userdomain)
+')
+
+optional_policy(`
 	systemd_login_watch_pid_dirs(login_userdomain)
 	systemd_login_watch_session_dirs(login_userdomain)
 	systemd_machined_watch_pid_dirs(login_userdomain)
@@ -503,6 +505,10 @@ optional_policy(`
 
 optional_policy(`
 	thumb_read_tmp_files(login_userdomain)
+')
+
+optional_policy(`
+	tuned_dbus_chat_ppd(login_userdomain)
 ')
 
 optional_policy(`
@@ -656,11 +662,16 @@ optional_policy(`
 ')
 
 optional_policy(`
+	logging_read_generic_logs(confined_admindomain)
+	logging_mmap_generic_logs(confined_admindomain)
+')
+
+optional_policy(`
 	rpc_rw_gssd_keys(confined_admindomain)
 ')
 	
 optional_policy(`
-	ssh_rw_stream_sockets(confined_admindomain)
+	ssh_session_rw_stream_sockets(confined_admindomain)
 	ssh_delete_tmp(confined_admindomain)
 	ssh_signal(confined_admindomain)
 ')

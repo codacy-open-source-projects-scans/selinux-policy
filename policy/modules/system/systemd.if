@@ -104,7 +104,7 @@ interface(`systemd_systemctl_common',`
 #######################################
 ## <summary>
 ##      Create a domain for processes which are started 
-##      exuting systemctl.
+##      executing systemctl.
 ## </summary>
 ## <param name="domain_prefix">
 ##      <summary>
@@ -485,6 +485,26 @@ interface(`systemd_resolved_pid_filetrans',`
 
 ######################################
 ## <summary>
+##	Read systemd_ssh_issue PID files.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`systemd_ssh_issue_read_pid_files',`
+	gen_require(`
+		type systemd_ssh_issue_var_run_t;
+	')
+
+	files_search_pids($1)
+	list_dirs_pattern($1, systemd_ssh_issue_var_run_t, systemd_ssh_issue_var_run_t)
+	read_files_pattern($1, systemd_ssh_issue_var_run_t, systemd_ssh_issue_var_run_t)
+')
+
+######################################
+## <summary>
 ##	Read systemd_login PID files.
 ## </summary>
 ## <param name="domain">
@@ -713,6 +733,24 @@ interface(`systemd_dontaudit_write_inherited_logind_sessions_pipes',`
 
 ######################################
 ## <summary>
+##	Getattr systemd inhibit pipes.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`systemd_getattr_inhibit_pipes',`
+	gen_require(`
+		type systemd_logind_inhibit_var_run_t;
+	')
+
+	allow $1 systemd_logind_inhibit_var_run_t:fifo_file getattr;
+')
+
+######################################
+## <summary>
 ##	Write systemd inhibit pipes.
 ## </summary>
 ## <param name="domain">
@@ -746,6 +784,27 @@ interface(`systemd_mounton_inhibit_dir',`
     ')
 
     allow $1 systemd_logind_inhibit_var_run_t:dir mounton;
+')
+
+########################################
+## <summary>
+##	Allow the specified domain to connect to
+##	systemd-logind over a unix socket.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`systemd_logind_stream_connect',`
+	gen_require(`
+		type systemd_logind_t;
+		type systemd_logind_var_run_t;
+	')
+
+	allow $1 systemd_logind_t:unix_stream_socket connectto;
+	allow $1 systemd_logind_var_run_t:sock_file write;
 ')
 
 ########################################
@@ -1181,6 +1240,24 @@ interface(`systemd_passwd_agent_role',`
 
 ########################################
 ## <summary>
+##	Read the process state (/proc/pid) of systemd_passwd_agent_t.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`systemd_passwd_agent_read_proc_state',`
+	gen_require(`
+              type systemd_passwd_agent_t;
+	')
+
+	ps_process_pattern($1, systemd_passwd_agent_t)
+')
+
+########################################
+## <summary>
 ##	Send generic signals to systemd_passwd_agent processes.
 ## </summary>
 ## <param name="domain">
@@ -1412,7 +1489,7 @@ interface(`systemd_manage_unit_dirs',`
 #
 interface(`systemd_manage_unit_symlinks',`
 	gen_require(`
-		attribute systemd_unit_file_type;
+		type systemd_unit_file_t;
 	')
 
 	manage_lnk_files_pattern($1, systemd_unit_file_t, systemd_unit_file_t)
@@ -1471,6 +1548,24 @@ interface(`systemd_start_all_services',`
 	')
 
 	allow $1 systemd_unit_file_type:service start;
+')
+
+########################################
+## <summary>
+##	Allow the specified domain to stop all systemd services.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`systemd_stop_all_services',`
+	gen_require(`
+		attribute systemd_unit_file_type;
+	')
+
+	allow $1 systemd_unit_file_type:service stop;
 ')
 
 #######################################
@@ -1619,7 +1714,7 @@ interface(`systemd_manage_random_seed',`
 	')
 
 	allow $1 random_seed_t:file manage_file_perms;
-	files_var_lib_filetrans($1, random_seed_t, file, "random_seed")
+	init_var_lib_filetrans($1, random_seed_t, file, "random-seed");
 ')
 
 ########################################
@@ -2366,8 +2461,6 @@ interface(`systemd_machined_watch_pid_dirs',`
 	allow $1 systemd_machined_var_run_t:dir watch_dir_perms;
 ')
 
-
-
 ########################################
 ## <summary>
 ##      Search systemd-machined lib directories.
@@ -2385,6 +2478,25 @@ interface(`systemd_machined_search_lib',`
 
         allow $1 systemd_machined_var_lib_t:dir search_dir_perms;
         files_search_var_lib($1)
+')
+
+########################################
+## <summary>
+##	List systemd-machined lib directories.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`systemd_machined_list_lib',`
+	gen_require(`
+		type systemd_machined_var_lib_t;
+	')
+
+	files_search_var_lib($1)
+	list_dirs_pattern($1, systemd_machined_var_lib_t, systemd_machined_var_lib_t)
 ')
 
 ########################################
@@ -2442,6 +2554,42 @@ interface(`systemd_machined_rw_devpts_chr_files',`
         ')
 
         rw_chr_files_pattern($1, devpts_t, systemd_machined_devpts_t)
+')
+
+########################################
+## <summary>
+##	Watch systemd-machined user pty.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`systemd_machined_watch_user_ptys',`
+	gen_require(`
+		type systemd_machined_devpts_t;
+	')
+
+	allow $1 systemd_machined_devpts_t:chr_file watch_chr_file_perms;
+')
+
+########################################
+## <summary>
+##	Watch_reads systemd-machined user pty.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`systemd_machined_watch_reads_user_ptys',`
+	gen_require(`
+		type systemd_machined_devpts_t;
+	')
+
+	allow $1 systemd_machined_devpts_t:chr_file watch_reads_chr_file_perms;
 ')
 
 ########################################
@@ -2736,6 +2884,24 @@ interface(`systemd_networkd_watch_pid_dirs',`
 
 ########################################
 ## <summary>
+##	Read and write to systemd-networkd tmpfs files.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`systemd_rw_networkd_tmpfs_files',`
+	gen_require(`
+		type systemd_networkd_tmpfs_t;
+	')
+
+	allow $1 systemd_networkd_tmpfs_t:file rw_file_perms;
+')
+
+########################################
+## <summary>
 ##	Mmap systemd_resolved_exec_t files.
 ## </summary>
 ## <param name="domain">
@@ -2867,6 +3033,41 @@ interface(`systemd_userdbd_runtime_filetrans',`
 	')
 
 	filetrans_pattern($1, init_var_run_t, systemd_userdbd_runtime_t, dir, "userdb")
+')
+
+#######################################
+## <summary>
+##	Create objects in /run/systemd/userdbd directory
+##	with an automatic type transition to a specified private type.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+## <param name="private_type">
+##	<summary>
+##	The type of the object to create.
+##	</summary>
+## </param>
+## <param name="object_class">
+##	<summary>
+##	The class of the object to be created.
+##	</summary>
+## </param>
+## <param name="name" optional="true">
+##	<summary>
+##	The name of the object being created.
+##	</summary>
+## </param>
+#
+interface(`systemd_userdbd_named_runtime_filetrans',`
+	gen_require(`
+		type systemd_userdbd_runtime_t;
+	')
+
+	files_search_pids($1)
+	filetrans_pattern($1, systemd_userdbd_runtime_t, $2, $3, $4)
 ')
 
 #######################################
@@ -3114,4 +3315,26 @@ interface(`systemd_cache_filetrans',`
 	')
 
 	filetrans_pattern($1, systemd_cache_t, $2, $3, $4)
+')
+
+########################################
+## <summary>
+##	Allow the specified domain to connect to
+##	systemd-oomd over a unix socket.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`systemd_oomd_stream_connect',`
+	gen_require(`
+		type systemd_oomd_t;
+		type systemd_oomd_var_run_t;
+	')
+
+	allow $1 systemd_oomd_t:unix_stream_socket connectto;
+	allow $1 systemd_oomd_var_run_t:sock_file write;
+	files_search_pids($1)
 ')

@@ -2423,6 +2423,24 @@ interface(`dev_rw_inherited_input_dev',`
 
 ########################################
 ## <summary>
+##	Read iio devices.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`dev_read_iio_dev',`
+	gen_require(`
+		type device_t, iio_device_t;
+	')
+
+	read_chr_files_pattern($1, device_t, iio_device_t)
+')
+
+########################################
+## <summary>
 ##	Read ipmi devices.
 ## </summary>
 ## <param name="domain">
@@ -5048,6 +5066,42 @@ interface(`dev_write_sysfs_dirs',`
 
 ########################################
 ## <summary>
+##	Watch a sysfs directory.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`dev_watch_sysfs_dirs',`
+	gen_require(`
+		type sysfs_t;
+	')
+
+	watch_dirs_pattern($1, sysfs_t, sysfs_t)
+')
+
+########################################
+## <summary>
+##	Watch_reads a sysfs directory.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`dev_watch_reads_sysfs_dirs',`
+	gen_require(`
+		type sysfs_t;
+	')
+
+	watch_reads_dirs_pattern($1, sysfs_t, sysfs_t)
+')
+
+########################################
+## <summary>
 ##	Access check for a sysfs directories.
 ## </summary>
 ## <param name="domain">
@@ -5795,6 +5849,24 @@ interface(`dev_rw_usbfs',`
 	read_lnk_files_pattern($1, usbfs_t, usbfs_t)
 ')
 
+########################################
+## <summary>
+##	Setattr userfaultfd device.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`dev_setattr_userfaultfd',`
+	gen_require(`
+		type device_t, userfaultfd_device_t;
+	')
+
+	setattr_chr_files_pattern($1, device_t, userfaultfd_device_t)
+')
+
 ######################################
 ## <summary>
 ##	Read and write userio device.
@@ -6108,6 +6180,24 @@ interface(`dev_rw_vfio_dev',`
 
 ########################################
 ## <summary>
+##	Unlink the VFIO devices.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`dev_unlink_vfio_dev',`
+	gen_require(`
+		type device_t, vfio_device_t;
+	')
+
+	delete_chr_files_pattern($1, device_t, vfio_device_t)
+')
+
+########################################
+## <summary>
 ##	Allow read/write the vhost net device
 ## </summary>
 ## <param name="domain">
@@ -6158,6 +6248,25 @@ interface(`dev_map_vhost',`
 	')
 
 	allow $1 vhost_device_t:chr_file map;
+')
+
+########################################
+## <summary>
+##	ioctl the vduse devices
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`dev_ioctl_vduse',`
+	gen_require(`
+		type vduse_device_t;
+	')
+
+	allow $1 vduse_device_t:dir search_dir_perms;
+	allow $1 vduse_device_t:chr_file ioctl;
 ')
 
 ########################################
@@ -6787,6 +6896,61 @@ interface(`dev_read_sgx_vepc',`
 	')
 
 	read_chr_files_pattern($1, device_t, sgx_vepc_device_t)
+')
+
+########################################
+## <summary>
+##	Allow read and write the sgx_vepc devices
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`dev_rw_sgx_vepc',`
+	gen_require(`
+		type device_t, sgx_vepc_device_t;
+	')
+
+	rw_chr_files_pattern($1, device_t, sgx_vepc_device_t)
+')
+
+########################################
+## <summary>
+##      Allow read and write the sgx_enclave devices
+## </summary>
+## <param name="domain">
+##      <summary>
+##      Domain allowed access.
+##      </summary>
+## </param>
+#
+interface(`dev_rwx_sgx_enclave',`
+        gen_require(`
+                type device_t, sgx_enclave_device_t;
+        ')
+
+        rw_chr_files_pattern($1, device_t, sgx_enclave_device_t)
+        allow $1 sgx_enclave_device_t:chr_file { map execute };
+')
+
+########################################
+## <summary>
+##      Allow read and write the sgx_provision devices
+## </summary>
+## <param name="domain">
+##      <summary>
+##      Domain allowed access.
+##      </summary>
+## </param>
+#
+interface(`dev_rw_sgx_provision',`
+        gen_require(`
+                type device_t, sgx_provision_device_t;
+        ')
+
+        rw_chr_files_pattern($1, device_t, sgx_provision_device_t)
 ')
 
 ########################################

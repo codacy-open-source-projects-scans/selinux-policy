@@ -124,6 +124,9 @@ type proc_net_t, proc_type;
 fs_associate(proc_net_t)
 genfscon proc /net gen_context(system_u:object_r:proc_net_t,s0)
 
+type proc_psi_t, proc_type;
+genfscon proc /pressure gen_context(system_u:object_r:proc_psi_t,s0)
+
 type proc_security_t, proc_type;
 fs_associate(proc_security_t)
 genfscon proc /sys/fs/protected_hardlinks gen_context(system_u:object_r:proc_security_t,s0)
@@ -186,6 +189,11 @@ genfscon proc /sys/fs gen_context(system_u:object_r:sysctl_fs_t,s0)
 type sysctl_kernel_t, sysctl_type;
 fs_associate(sysctl_kernel_t)
 genfscon proc /sys/kernel gen_context(system_u:object_r:sysctl_kernel_t,s0)
+
+# /proc/sys/kernel/nmi_watchdog
+type sysctl_nmi_watchdog_t, sysctl_type;
+fs_associate(sysctl_nmi_watchdog_t)
+genfscon proc /sys/kernel/nmi_watchdog gen_context(system_u:object_r:sysctl_nmi_watchdog_t,s0)
 
 # /sys/kernel/ns_last_pid file
 type sysctl_kernel_ns_last_pid_t, sysctl_type;

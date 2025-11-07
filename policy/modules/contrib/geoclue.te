@@ -52,6 +52,7 @@ dev_read_urand(geoclue_t)
 files_watch_etc_dirs(geoclue_t)
 
 fs_getattr_cgroup(geoclue_t)
+fs_getattr_tmpfs(geoclue_t)
 fs_getattr_xattr_fs(geoclue_t)
 
 init_dbus_chat(geoclue_t)
@@ -86,5 +87,13 @@ optional_policy(`
 ')
 
 optional_policy(`
+	networkmanager_read_pid_files(geoclue_t)
+')
+
+optional_policy(`
 	pcscd_stream_connect(geoclue_t)
+')
+
+optional_policy(`
+	virt_read_lib_files(geoclue_t)
 ')

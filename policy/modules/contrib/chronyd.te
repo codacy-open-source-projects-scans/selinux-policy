@@ -213,6 +213,7 @@ allow chronyd_restricted_t self:tcp_socket create_stream_socket_perms;
 allow chronyd_restricted_t self:udp_socket create_socket_perms;
 allow chronyd_restricted_t self:unix_dgram_socket create_socket_perms;
 
+allow chronyd_restricted_t chronyc_t:unix_dgram_socket sendto;
 allow chronyd_restricted_t chronyd_keys_t:file read_file_perms;
 
 manage_files_pattern(chronyd_restricted_t, chronyd_var_lib_t, chronyd_var_lib_t)
@@ -254,7 +255,7 @@ optional_policy(`
 # Local policy
 #
 
-allow chronyc_t self:capability { dac_read_search dac_override };
+allow chronyc_t self:capability { dac_read_search dac_override setgid setuid };
 allow chronyc_t self:udp_socket create_socket_perms;
 allow chronyc_t self:unix_dgram_socket create_socket_perms;
 allow chronyc_t self:netlink_route_socket create_netlink_socket_perms;

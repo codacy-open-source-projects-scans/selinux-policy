@@ -385,6 +385,7 @@ auth_manage_shadow(updpwd_t)
 auth_etc_filetrans_shadow(updpwd_t)
 auth_use_nsswitch(updpwd_t)
 
+logging_send_audit_msgs(updpwd_t)
 logging_send_syslog_msg(updpwd_t)
 
 userdom_use_inherited_user_terminals(updpwd_t)
@@ -422,6 +423,8 @@ init_rw_utmp(utempter_t)
 domain_use_interactive_fds(utempter_t)
 
 logging_search_logs(utempter_t)
+
+term_use_ptmx(utempter_t)
 
 userdom_append_stream_userdomain(utempter_t)
 userdom_use_inherited_user_terminals(utempter_t)
@@ -584,6 +587,10 @@ optional_policy(`
     virt_read_lib_files(nsswitch_domain)
 ')
 
+optional_policy(`
+	xserver_stream_connect_xdm(nsswitch_domain)
+')
+
 #######################################
 #
 # Login Program local policy
@@ -618,10 +625,12 @@ manage_files_pattern(login_pgm, auth_home_t, auth_home_t)
 auth_filetrans_admin_home_content(login_pgm)
 auth_filetrans_home_content(login_pgm)
 auth_filetrans_auth_home_content(login_pgm)
+auth_create_lastlog(login_pgm)
 
 # needed for afs - https://bugzilla.redhat.com/bugzilla/show_bug.cgi?id=253321
 kernel_search_network_sysctl(login_pgm)
 kernel_rw_afs_state(login_pgm)
+kernel_read_fs_sysctls(login_pgm)
 
 tunable_policy(`authlogin_radius',`
 	corenet_udp_bind_all_unreserved_ports(login_pgm)
@@ -716,4 +725,14 @@ optional_policy(`
 optional_policy(`
 	ssh_agent_exec(login_pgm)
 	ssh_read_user_home_files(login_pgm)
+')
+
+optional_policy(`
+	systemd_logind_stream_connect(login_pgm)
+')
+
+optional_policy(`
+	systemd_homed_write_pid_sock_files(login_pgm)
+	systemd_homed_write_pipes(login_pgm)
+	systemd_homed_dbus_chat(login_pgm)
 ')

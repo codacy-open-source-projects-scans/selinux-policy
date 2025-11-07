@@ -450,6 +450,7 @@ allow xdm_t self:socket create_socket_perms;
 allow xdm_t self:appletalk_socket create_socket_perms;
 allow xdm_t self:key { search link write };
 allow xdm_t self:dbus { send_msg acquire_svc };
+allow xdm_t self:user_namespace create;
 
 allow xdm_t xauth_home_t:file manage_file_perms;
 
@@ -562,7 +563,6 @@ kernel_mount_proc(xdm_t)
 kernel_read_system_state(xdm_t)
 kernel_read_device_sysctls(xdm_t)
 kernel_read_sysctl(xdm_t)
-kernel_read_fs_sysctls(xdm_t)
 kernel_read_kernel_sysctls(xdm_t)
 kernel_read_net_sysctls(xdm_t)
 kernel_read_network_state(xdm_t)
@@ -644,6 +644,7 @@ files_list_mnt(xdm_t)
 files_watch_etc_dirs(xdm_t)
 files_watch_etc_files(xdm_t)
 files_watch_lib_dirs(xdm_t)
+files_watch_mnt_dirs(xdm_t)
 files_watch_usr_dirs(xdm_t)
 files_watch_usr_files(xdm_t)
 files_watch_var_lib_dirs(xdm_t)
@@ -717,6 +718,9 @@ auth_manage_pam_console_data(xdm_t)
 auth_signal_pam(xdm_t)
 auth_rw_faillog(xdm_t)
 auth_write_login_records(xdm_t)
+auth_filetrans_named_content_pwd_lock(xdm_t)
+auth_create_passwd(xdm_t)
+auth_write_passwd(xdm_t)
 
 # Run telinit->init to shutdown.
 init_telinit(xdm_t)
@@ -745,6 +749,7 @@ mount_watch_pid_dirs(xdm_t)
 mount_watch_pid_files(xdm_t)
 mount_watch_reads_pid_files(xdm_t)
 
+systemd_getattr_inhibit_pipes(xdm_t)
 systemd_write_inhibit_pipes(xdm_t)
 systemd_dbus_chat_localed(xdm_t)
 systemd_dbus_chat_hostnamed(xdm_t)
@@ -754,6 +759,7 @@ systemd_hwdb_mmap_config(xdm_t)
 systemd_hwdb_read_config(xdm_t)
 systemd_coredump_domtrans(xdm_t)
 systemd_login_watch_session_dirs(xdm_t)
+systemd_userdbd_named_runtime_filetrans(xdm_t, xdm_var_run_t, sock_file, "org.gnome.DisplayManager")
 
 userdom_dontaudit_use_unpriv_user_fds(xdm_t)
 userdom_create_all_users_keys(xdm_t)
@@ -1147,12 +1153,6 @@ optional_policy(`
 
 optional_policy(`
     sssd_read_pid_files(xdm_t)
-')
-
-optional_policy(`
-    systemd_homed_write_pid_sock_files(xdm_t)
-    systemd_homed_write_pipes(xdm_t)
-    systemd_homed_dbus_chat(xdm_t)
 ')
 
 optional_policy(`
@@ -1859,5 +1859,4 @@ tunable_policy(`selinuxuser_direct_dri_enabled',`
 #============= xdm_t ==============
 optional_policy(`
 	gnome_remote_desktop_rw_tcp_sockets(xdm_t)
-	dev_rw_dma_dev(xdm_t)
 ')
