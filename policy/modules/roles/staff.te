@@ -355,8 +355,14 @@ optional_policy(`
 
 optional_policy(`
 	sudo_role_template(staff, staff_r, staff_t)
+
+	init_read_state(staff_sudo_t)
+
 	optional_policy(`
 		crontab_domtrans(staff_sudo_t)
+	')
+	optional_policy(`
+		systemd_read_logind_sessions_files(staff_sudo_t)
 	')
 ')
 
