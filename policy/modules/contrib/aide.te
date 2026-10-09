@@ -25,7 +25,7 @@ files_type(aide_db_t)
 # Local policy
 #
 
-allow aide_t self:capability { dac_read_search  fowner ipc_lock sys_admin };
+allow aide_t self:capability { dac_read_search fowner ipc_lock sys_admin };
 allow aide_t self:process signal;
 dontaudit aide_t self:process execmem;
 
@@ -47,8 +47,7 @@ files_read_all_symlinks(aide_t)
 files_getattr_all_pipes(aide_t)
 files_getattr_all_sockets(aide_t)
 
-fs_getattr_tmpfs(aide_t)
-fs_getattr_xattr_fs(aide_t)
+fs_getattr_all_fs(aide_t)
 
 init_stream_connectto(aide_t)
 
@@ -78,9 +77,13 @@ optional_policy(`
 ')
 
 optional_policy(`
-    sssd_stream_connect(aide_t)
+	sssd_stream_connect(aide_t)
 ')
 
 optional_policy(`
-    udev_getattr_rules_chr_files(aide_t)
+	udev_getattr_rules_chr_files(aide_t)
+')
+
+optional_policy(`
+	xserver_stream_connect_xdm(aide_t)
 ')

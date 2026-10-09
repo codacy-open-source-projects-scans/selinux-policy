@@ -180,6 +180,7 @@ files_manage_etc_symlinks(insights_client_t)
 #init_status(insights_client_t)
 #init_status_all_script_files(insights_client_t)
 #init_view_key(insights_client_t)
+init_read_script_state(insights_client_t)
 
 libs_exec_ldconfig(insights_client_t)
 
@@ -202,6 +203,10 @@ libs_exec_ldconfig(insights_client_t)
 #	abrt_dbus_chat(insights_client_t)
 #')
 #
+optional_policy(`
+	anaconda_read_state_install(insights_client_t)
+')
+
 #optional_policy(`
 #	apache_exec_modules(insights_client_t)
 #	apache_read_semaphores(insights_client_t)
@@ -234,11 +239,11 @@ optional_policy(`
 #	container_runtime_domtrans(insights_client_t)
 #')
 #
-#optional_policy(`
-#	cron_signull_system_job(insights_client_t)
-#	cron_system_entry(insights_client_t, insights_client_exec_t)
-#')
-#
+
+optional_policy(`
+	cron_system_entry(insights_client_t, insights_client_exec_t)
+')
+
 #optional_policy(`
 #	dbus_system_bus_client(insights_client_t)
 #')
@@ -273,10 +278,7 @@ optional_policy(`
 #')
 
 optional_policy(`
-#	gnome_search_gconf(insights_client_t)
-#	gnome_manage_generic_cache_files(insights_client_t)
-#	gnome_manage_home_config(insights_client_t)
-#	gnome_manage_home_config_dirs(insights_client_t)
+	gnome_read_gconf_home_files(insights_client_t)
 	gnome_read_generic_data_home_dirs(insights_client_t)
 ')
 
@@ -373,10 +375,6 @@ optional_policy(`
 
 optional_policy(`
 	rhsmcertd_read_config_files(insights_client_t)
-#	rhsmcertd_manage_config_files(insights_client_t)
-#	rhsmcertd_manage_pid_files(insights_client_t)
-#	rhsmcertd_manage_lib_files(insights_client_t)
-#	rhsmcertd_manage_log(insights_client_t)
 ')
 
 optional_policy(`
@@ -423,12 +421,9 @@ optional_policy(`
 #')
 
 optional_policy(`
-#	userdom_manage_admin_files(insights_client_t)
-#	userdom_manage_user_tmp_files(insights_client_t)
 	userdom_user_tmp_filetrans(insights_client_t, insights_client_tmp_t, { dir file })
 	userdom_write_user_tmp_sockets(insights_client_t)
 	#userdom_user_tmp_filetrans(insights_client_t, insights_client_tmp_t, dir)
-#	userdom_view_all_users_keys(insights_client_t)
 ')
 #
 #optional_policy(`

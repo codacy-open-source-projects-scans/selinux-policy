@@ -126,7 +126,7 @@ HOME_DIR/\.dmrc.*	--	gen_context(system_u:object_r:xdm_home_t,s0)
 /usr/bin/x11vnc		--	gen_context(system_u:object_r:xserver_exec_t,s0)
 /usr/bin/nvidia.*	--	gen_context(system_u:object_r:xserver_exec_t,s0)
 
-/usr/libexec/Xorg\.bin  --  gen_context(system_u:object_r:xserver_exec_t,s0)   
+/usr/libexec/Xorg\.bin  --  gen_context(system_u:object_r:xserver_exec_t,s0)
 /usr/libexec/Xorg\.wrap  --  gen_context(system_u:object_r:xserver_exec_t,s0)
 
 /usr/libexec/gsd-backlight-helper	--	gen_context(system_u:object_r:xserver_exec_t,s0)
@@ -205,6 +205,7 @@ ifndef(`distro_debian',`
 /run/video.rom	--	gen_context(system_u:object_r:xserver_var_run_t,s0)
 /run/xorg(/.*)?		gen_context(system_u:object_r:xserver_var_run_t,s0)
 /run/systemd/multi-session-x(/.*)?	gen_context(system_u:object_r:xdm_var_run_t,s0)
+/run/systemd/userdb/org\.gnome\.DisplayManager	-s	gen_context(system_u:object_r:xdm_var_run_t,s0)
 
 ifdef(`distro_suse',`
 /var/lib/pam_devperm/:0	--	gen_context(system_u:object_r:xdm_var_lib_t,s0)

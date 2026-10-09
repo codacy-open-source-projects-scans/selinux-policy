@@ -7,45 +7,45 @@ policy_module(logging, 1.20.1)
 attribute syslog_client_type;
 
 ## <desc>
-## <p>
-## Allow syslogd daemon append public content files
-## </p>
+##	<p>
+##	Allow syslogd daemon append public content files
+##	</p>
 ## </desc>
 gen_tunable(logging_syslogd_append_public_content, false)
 
 ## <desc>
-## <p>
-## Allow syslogd daemon to send mail
-## </p>
+##	<p>
+##	Allow syslogd daemon to send mail
+##	</p>
 ## </desc>
 gen_tunable(logging_syslogd_can_sendmail, false)
 
 ## <desc>
-## <p>
-## Allow syslogd daemon list non security directories
-## </p>
+##	<p>
+##	Allow syslogd daemon list non security directories
+##	</p>
 ## </desc>
 gen_tunable(logging_syslogd_list_non_security_dirs, false)
 
 ## <desc>
-## <p>
-## Allow syslogd the ability to read/write terminals
-## </p>
+##	<p>
+##	Allow syslogd the ability to read/write terminals
+##	</p>
 ## </desc>
 gen_tunable(logging_syslogd_use_tty, true)
 
 ## <desc>
-## <p>
-## Allow syslogd the ability to call nagios plugins. It is
-## turned on by omprog rsyslog plugin.
-## </p>
+##	<p>
+##	Allow syslogd the ability to call nagios plugins. It is
+##	turned on by omprog rsyslog plugin.
+##	</p>
 ## </desc>
 gen_tunable(logging_syslogd_run_nagios_plugins, false)
 
 ## <desc>
-## <p>
-## Allow syslog to run unconfined scripts
-## </p>
+##	<p>
+##	Allow syslog to run unconfined scripts
+##	</p>
 ## </desc>
 gen_tunable(logging_syslogd_run_unconfined, false)
 
@@ -156,7 +156,7 @@ ifdef(`enable_mls',`
 # Auditctl local policy
 #
 
-allow auditctl_t self:capability { fsetid dac_read_search  };
+allow auditctl_t self:capability { fsetid dac_read_search };
 allow auditctl_t self:netlink_audit_socket nlmsg_readpriv;
 
 allow auditctl_t self:process getcap;
@@ -278,6 +278,7 @@ mls_socket_write_all_levels(auditd_t)
 
 sysnet_dns_name_resolve(auditd_t)
 
+systemd_read_nsresourced_sock_files(auditd_t)
 systemd_start_systemd_services(auditd_t)
 systemd_start_power_services(auditd_t)
 systemd_status_power_services(auditd_t)
@@ -293,7 +294,7 @@ ifdef(`distro_ubuntu',`
 ')
 
 optional_policy(`
-        kerberos_manage_host_rcache(auditd_t)
+	kerberos_manage_host_rcache(auditd_t)
 ')
 
 optional_policy(`
@@ -310,7 +311,7 @@ optional_policy(`
 
 optional_policy(`
 	dbus_system_bus_client(auditd_t)
-    dbus_connect_system_bus(auditd_t)
+	dbus_connect_system_bus(auditd_t)
 
 	optional_policy(`
 		setroubleshoot_dbus_chat(auditd_t)
@@ -322,7 +323,7 @@ optional_policy(`
 # audit dispatcher local policy
 #
 
-allow audisp_t self:capability { dac_read_search  setpcap sys_nice };
+allow audisp_t self:capability { dac_read_search setpcap sys_nice };
 allow audisp_t self:process { getcap signal_perms setcap setsched };
 allow audisp_t self:fifo_file rw_fifo_file_perms;
 allow audisp_t self:unix_stream_socket create_stream_socket_perms;
@@ -360,7 +361,7 @@ sysnet_dns_name_resolve(audisp_t)
 
 optional_policy(`
 	dbus_system_bus_client(audisp_t)
-    dbus_connect_system_bus(audisp_t)
+	dbus_connect_system_bus(audisp_t)
 
 	optional_policy(`
 		setroubleshoot_dbus_chat(audisp_t)
@@ -425,7 +426,7 @@ term_search_ptys(audisp_remote_t)
 userdom_use_user_ptys(audisp_remote_t)
 
 optional_policy(`
-    kerberos_read_keytab(audisp_remote_t)
+	kerberos_read_keytab(audisp_remote_t)
 ')
 
 ########################################
@@ -467,7 +468,6 @@ files_read_etc_files(klogd_t)
 
 logging_send_syslog_msg(klogd_t)
 
-
 mls_file_read_all_levels(klogd_t)
 
 userdom_dontaudit_search_user_home_dirs(klogd_t)
@@ -499,6 +499,7 @@ allow syslogd_t self:capability { sys_ptrace dac_read_search dac_override sys_re
 dontaudit syslogd_t self:capability sys_tty_config;
 dontaudit syslogd_t self:cap_userns { kill sys_ptrace };
 allow syslogd_t self:capability2 { syslog block_suspend };
+allow syslogd_t self:netlink_tcpdiag_socket create_netlink_socket_perms;
 # setpgid for metalog
 # setrlimit for syslog-ng
 allow syslogd_t self:process { signal_perms getcap setcap setpgid getsched setsched setrlimit };
@@ -611,8 +612,8 @@ corenet_sendrecv_postgresql_client_packets(syslogd_t)
 corenet_sendrecv_mysqld_client_packets(syslogd_t)
 
 tunable_policy(`logging_syslogd_use_tty',`
-   term_use_all_ttys(syslogd_t)
-   term_use_all_ptys(syslogd_t)
+	term_use_all_ttys(syslogd_t)
+	term_use_all_ptys(syslogd_t)
 ')
 
 tunable_policy(`logging_syslogd_append_public_content',`
@@ -631,10 +632,10 @@ tunable_policy(`logging_syslogd_list_non_security_dirs',`
 ')
 
 optional_policy(`
-    tunable_policy(`logging_syslogd_run_nagios_plugins',`
-        nagios_domtrans_unconfined_plugins(syslogd_t)
-        nagios_unconfined_signull(syslogd_t)
-    ')
+	tunable_policy(`logging_syslogd_run_nagios_plugins',`
+		nagios_domtrans_unconfined_plugins(syslogd_t)
+		nagios_unconfined_signull(syslogd_t)
+	')
 ')
 
 dev_filetrans(syslogd_t, devlog_t, sock_file)
@@ -723,7 +724,7 @@ optional_policy(`
 ')
 
 optional_policy(`
-    container_read_lib_files(syslogd_t)
+	container_read_lib_files(syslogd_t)
 ')
 
 optional_policy(`
@@ -763,7 +764,7 @@ optional_policy(`
 ')
 
 optional_policy(`
-    psad_search_lib_files(syslogd_t)
+	psad_search_lib_files(syslogd_t)
 ')
 
 optional_policy(`
@@ -775,7 +776,7 @@ optional_policy(`
 optional_policy(`
 	systemd_rw_coredump_tmpfs_files(syslogd_t)
 	systemd_map_coredump_tmpfs_files(syslogd_t)
-    systemd_read_unit_files(syslogd_t)
+	systemd_read_unit_files(syslogd_t)
 ')
 
 optional_policy(`
@@ -787,7 +788,7 @@ optional_policy(`
 ')
 
 optional_policy(`
-    daemontools_search_svc_dir(syslogd_t)
+	daemontools_search_svc_dir(syslogd_t)
 ')
 
 optional_policy(`
@@ -811,7 +812,6 @@ allow syslog_client_type syslogd_t:unix_dgram_socket sendto;
 allow syslog_client_type syslogd_t:unix_stream_socket connectto;
 allow syslog_client_type self:unix_dgram_socket create_socket_perms;
 allow syslog_client_type self:unix_stream_socket create_socket_perms;
-
 
 kernel_stream_connect(syslog_client_type)
 

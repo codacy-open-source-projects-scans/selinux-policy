@@ -5,9 +5,9 @@
 ##	Execute TEMPLATE in the cockpit domin.
 ## </summary>
 ## <param name="domain">
-## <summary>
+##	<summary>
 ##	Domain allowed to transition.
-## </summary>
+##	</summary>
 ## </param>
 #
 ifndef(`cockpit_ws_domtrans',`
@@ -26,9 +26,9 @@ ifndef(`cockpit_ws_domtrans',`
 ##	Execute TEMPLATE in the cockpit domin.
 ## </summary>
 ## <param name="domain">
-## <summary>
+##	<summary>
 ##	Domain allowed to transition.
-## </summary>
+##	</summary>
 ## </param>
 #
 ifndef(`cockpit_session_domtrans',`
@@ -79,6 +79,46 @@ ifndef(`cockpit_session_rw_stream_sockets',`
 		')
 
 		allow $1 cockpit_session_t:unix_stream_socket { read write };
+	')
+')
+
+########################################
+## <summary>
+##	Ioctl cockpit_session_t unix stream sockets.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+ifndef(`cockpit_session_ioctl_stream_sockets',`
+	interface(`cockpit_session_ioctl_stream_sockets',`
+		gen_require(`
+			type cockpit_session_t;
+		')
+
+		allow $1 cockpit_session_t:unix_stream_socket { getattr ioctl };
+	')
+')
+
+########################################
+## <summary>
+##	Send a null signal to cockpit_session_t.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+ifndef(`cockpit_session_signull',`
+	interface(`cockpit_session_signull',`
+		gen_require(`
+			type cockpit_session_t;
+		')
+
+		allow $1 cockpit_session_t:process signull;
 	')
 ')
 
@@ -273,7 +313,6 @@ ifndef(`cockpit_systemctl',`
 		ps_process_pattern($1, cockpit_ws_t)
 	')
 ')
-
 
 ########################################
 ## <summary>

@@ -9,8 +9,6 @@ type ktlshd_t;
 type ktlshd_exec_t;
 init_daemon_domain(ktlshd_t, ktlshd_exec_t)
 
-permissive ktlshd_t;
-
 allow ktlshd_t self:capability net_admin;
 allow ktlshd_t self:key write;
 allow ktlshd_t self:netlink_generic_socket create_socket_perms;
@@ -21,6 +19,7 @@ allow ktlshd_t self:unix_dgram_socket create_socket_perms;
 kernel_read_net_sysctls(ktlshd_t)
 kernel_read_network_state_symlinks(ktlshd_t)
 kernel_read_proc_files(ktlshd_t)
+kernel_request_load_module(ktlshd_t)
 kernel_rw_key(ktlshd_t)
 
 domain_read_view_all_domains_keyrings(ktlshd_t)
@@ -38,6 +37,10 @@ optional_policy(`
 	miscfiles_map_generic_certs(ktlshd_t)
 	miscfiles_write_generic_certs(ktlshd_t)
 	miscfiles_dontaudit_write_generic_cert_dirs(ktlshd_t)
+')
+
+optional_policy(`
+	rpc_tcp_rw_nfs_sockets(ktlshd_t)
 ')
 
 optional_policy(`

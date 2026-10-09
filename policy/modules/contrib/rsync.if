@@ -2,18 +2,18 @@
 
 #######################################
 ## <summary>
-##      Sendmail stub interface.  No access allowed.
+##	Sendmail stub interface.  No access allowed.
 ## </summary>
 ## <param name="domain" unused="true">
-##      <summary>
-##      Domain allowed access.
-##      </summary>
+##	<summary>
+##	Domain allowed access.
+##	</summary>
 ## </param>
 #
 interface(`rsync_stub',`
-    gen_require(`
-        type rsync_t;
-    ')
+	gen_require(`
+		type rsync_t;
+	')
 ')
 
 ########################################
@@ -120,14 +120,15 @@ interface(`rsync_exec',`
 	can_exec($1, rsync_exec_t)
 ')
 
+########################################
 ## <summary>
 ##	Allow the specified domain to ioctl an
 ##	rsync with a unix domain stream socket.
 ## </summary>
 ## <param name="domain">
-## <summary>
+##	<summary>
 ##	Domain allowed access.
-## </summary>
+##	</summary>
 ## </param>
 #
 interface(`rsync_ioctl_stream_sockets',`
@@ -143,9 +144,9 @@ interface(`rsync_ioctl_stream_sockets',`
 ##	Read rsync config files.
 ## </summary>
 ## <param name="domain">
-## <summary>
+##	<summary>
 ##	Domain allowed access.
-## </summary>
+##	</summary>
 ## </param>
 #
 interface(`rsync_read_config',`
@@ -162,9 +163,9 @@ interface(`rsync_read_config',`
 ##	Read rsync data files.
 ## </summary>
 ## <param name="domain">
-## <summary>
+##	<summary>
 ##	Domain allowed access.
-## </summary>
+##	</summary>
 ## </param>
 #
 interface(`rsync_read_data',`
@@ -266,14 +267,14 @@ interface(`rsync_etc_filetrans_config',`
 ## </summary>
 ## <param name="domain">
 ##	<summary>
-##      Domain allowed access.
+##	Domain allowed access.
 ##	</summary>
 ## </param>
 #
 interface(`rsync_filetrans_named_content',`
 	gen_require(`
 		type rsync_etc_t;
-        type rsync_var_run_t;
+		type rsync_var_run_t;
 	')
 
 	files_etc_filetrans($1, rsync_etc_t, file, "rsyncd.conf")

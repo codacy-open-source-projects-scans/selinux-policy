@@ -6,23 +6,23 @@ policy_module(sanlock, 1.1.0)
 #
 
 ## <desc>
-##  <p>
-##  Allow sanlock to manage nfs files
-##  </p>
+##	<p>
+##	Allow sanlock to manage nfs files
+##	</p>
 ## </desc>
 gen_tunable(sanlock_use_nfs, false)
 
 ## <desc>
-##  <p>
-##  Allow sanlock to manage cifs files
-##  </p>
+##	<p>
+##	Allow sanlock to manage cifs files
+##	</p>
 ## </desc>
 gen_tunable(sanlock_use_samba, false)
 
 ## <desc>
-## <p>
-## Allow sanlock to read/write fuse files
-## </p>
+##	<p>
+##	Allow sanlock to read/write fuse files
+##	</p>
 ## </desc>
 gen_tunable(sanlock_use_fusefs, false)
 
@@ -71,7 +71,7 @@ ifdef(`enable_mls',`
 #
 # sanlock local policy
 #
-allow sanlock_t self:capability { chown dac_read_search  ipc_lock kill setgid setuid sys_nice sys_resource };
+allow sanlock_t self:capability { chown dac_read_search ipc_lock kill setgid setuid sys_admin sys_nice sys_rawio sys_resource };
 allow sanlock_t self:process { setrlimit setsched signull signal sigkill };
 
 allow sanlock_t self:fifo_file rw_fifo_file_perms;
@@ -103,6 +103,7 @@ storage_raw_rw_fixed_disk(sanlock_t)
 
 dev_read_rand(sanlock_t)
 dev_read_urand(sanlock_t)
+dev_rw_lvm_control(sanlock_t)
 dev_rw_sysfs(sanlock_t)
 
 auth_use_nsswitch(sanlock_t)
@@ -113,24 +114,24 @@ init_dontaudit_write_utmp(sanlock_t)
 logging_send_syslog_msg(sanlock_t)
 
 tunable_policy(`sanlock_use_fusefs',`
-    fs_manage_fusefs_dirs(sanlock_t)
-    fs_manage_fusefs_files(sanlock_t)
-    fs_read_fusefs_symlinks(sanlock_t)
-    fs_getattr_fusefs(sanlock_t)
+	fs_manage_fusefs_dirs(sanlock_t)
+	fs_manage_fusefs_files(sanlock_t)
+	fs_read_fusefs_symlinks(sanlock_t)
+	fs_getattr_fusefs(sanlock_t)
 ')
 
 tunable_policy(`sanlock_use_nfs',`
-    fs_manage_nfs_dirs(sanlock_t)
-    fs_manage_nfs_files(sanlock_t)
-    fs_manage_nfs_named_sockets(sanlock_t)
-    fs_read_nfs_symlinks(sanlock_t)
+	fs_manage_nfs_dirs(sanlock_t)
+	fs_manage_nfs_files(sanlock_t)
+	fs_manage_nfs_named_sockets(sanlock_t)
+	fs_read_nfs_symlinks(sanlock_t)
 ')
 
 tunable_policy(`sanlock_use_samba',`
-    fs_manage_cifs_dirs(sanlock_t)
-    fs_manage_cifs_files(sanlock_t)
-    fs_manage_cifs_named_sockets(sanlock_t)
-    fs_read_cifs_symlinks(sanlock_t)
+	fs_manage_cifs_dirs(sanlock_t)
+	fs_manage_cifs_files(sanlock_t)
+	fs_manage_cifs_named_sockets(sanlock_t)
+	fs_read_cifs_symlinks(sanlock_t)
 ')
 
 tunable_policy(`sanlock_enable_home_dirs',`
@@ -146,7 +147,7 @@ optional_policy(`
 ')
 
 optional_policy(`
-    rhcs_domtrans_fenced(sanlock_t)
+	rhcs_domtrans_fenced(sanlock_t)
 ')
 
 optional_policy(`
@@ -167,7 +168,7 @@ optional_policy(`
 # sanlk_resetd local policy
 #
 
-allow sanlk_resetd_t self:capability { dac_read_search  };
+allow sanlk_resetd_t self:capability { dac_read_search };
 allow sanlk_resetd_t self:fifo_file rw_fifo_file_perms;
 allow sanlk_resetd_t sanlock_t:unix_stream_socket connectto;
 
@@ -183,5 +184,5 @@ domain_use_interactive_fds(sanlk_resetd_t)
 logging_send_syslog_msg(sanlk_resetd_t)
 
 optional_policy(`
-        wdmd_stream_connect(sanlk_resetd_t)
+	wdmd_stream_connect(sanlk_resetd_t)
 ')

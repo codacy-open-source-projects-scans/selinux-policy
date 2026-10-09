@@ -33,7 +33,7 @@ userdom_user_tmpfs_file(stapserver_tmpfs_t)
 allow stapserver_t self:capability { setuid setgid };
 allow stapserver_t self:process setsched;
 
-allow stapserver_t self:capability { dac_read_search  kill sys_ptrace};
+allow stapserver_t self:capability { dac_read_search kill sys_ptrace};
 allow stapserver_t self:process { setrlimit signal };
 
 allow stapserver_t self:fifo_file rw_fifo_file_perms;
@@ -66,9 +66,9 @@ fs_tmpfs_filetrans(stapserver_t, stapserver_tmpfs_t, { file dir })
 
 kernel_read_system_state(stapserver_t)
 kernel_read_kernel_sysctls(stapserver_t)
+kernel_read_network_state(stapserver_t)
 kernel_read_vm_sysctls(stapserver_t)
 kernel_read_fs_sysctls(stapserver_t)
-files_list_kernel_modules(stapserver_t)
 
 corecmd_exec_bin(stapserver_t)
 corecmd_exec_shell(stapserver_t)
@@ -81,7 +81,9 @@ dev_read_rand(stapserver_t)
 dev_read_urand(stapserver_t)
 
 files_list_tmp(stapserver_t)
+files_getattr_kernel_modules(stapserver_t)
 files_search_kernel_modules(stapserver_t)
+files_list_kernel_modules(stapserver_t)
 
 fs_search_cgroup_dirs(stapserver_t)
 fs_getattr_all_fs(stapserver_t)
@@ -101,7 +103,7 @@ systemd_dbus_chat_logind(stapserver_t)
 userdom_use_user_terminals(stapserver_t)
 
 optional_policy(`
-    avahi_dbus_chat(stapserver_t)
+	avahi_dbus_chat(stapserver_t)
 ')
 
 optional_policy(`
@@ -114,6 +116,10 @@ optional_policy(`
 
 optional_policy(`
 	hostname_exec(stapserver_t)
+')
+
+optional_policy(`
+	modutils_getattr_module_deps(stapserver_t)
 ')
 
 optional_policy(`

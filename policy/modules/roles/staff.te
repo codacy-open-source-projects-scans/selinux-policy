@@ -11,9 +11,9 @@ userdom_unpriv_user_template(staff)
 fs_exec_noxattr(staff_t)
 
 ## <desc>
-## <p>
-## allow staff user to create and transition to svirt domains.
-## </p>
+##	<p>
+##	allow staff user to create and transition to svirt domains.
+##	</p>
 ## </desc>
 gen_tunable(staff_use_svirt, false)
 
@@ -22,7 +22,7 @@ gen_tunable(staff_use_svirt, false)
 # Local policy
 #
 
-allow staff_t self:cap_userns { setpcap };
+allow staff_t self:cap_userns { dac_override setpcap };
 allow staff_t self:io_uring sqpoll;
 allow staff_t self:netlink_generic_socket { create_socket_perms };
 allow staff_t self:netlink_route_socket nlmsg_write;
@@ -45,10 +45,8 @@ files_dontaudit_read_all_symlinks(staff_t)
 files_dontaudit_manage_boot_dirs(staff_t)
 fs_read_tmpfs_files(staff_t)
 fs_read_binfmt_misc(staff_t)
-fs_mount_tmpfs(staff_t)
-fs_unmount_tmpfs(staff_t)
-fs_remount_xattr_fs(staff_t)
-fs_unmount_xattr_fs(staff_t)
+fs_read_nsfs_files(staff_t)
+fs_remount_all_fs(staff_t)
 
 dev_read_cpuid(staff_t)
 dev_read_kmsg(staff_t)
@@ -63,8 +61,6 @@ domain_getattr_all_domains(staff_t)
 domain_obj_id_change_exemption(staff_t)
 
 files_read_kernel_modules(staff_t)
-files_mounton_rootfs(staff_t)
-files_mounton_generic_tmp_dirs(staff_t)
 
 seutil_read_module_store(staff_t)
 seutil_run_newrole(staff_t, staff_r)
@@ -74,7 +70,6 @@ seutil_read_login_config(staff_t)
 storage_read_scsi_generic(staff_t)
 storage_write_scsi_generic(staff_t)
 
-term_mount_pty_fs(staff_t)
 term_use_unallocated_ttys(staff_t)
 term_use_generic_ptys(staff_t)
 
@@ -99,7 +94,7 @@ ifndef(`enable_mls',`
 
 optional_policy(`
 	abrt_read_cache(staff_t)
-    abrt_map_cache(staff_t)
+	abrt_map_cache(staff_t)
 ')
 
 optional_policy(`
@@ -135,6 +130,7 @@ optional_policy(`
 ')
 
 optional_policy(`
+	cockpit_session_ioctl_stream_sockets(staff_t)
 	cockpit_session_rw_stream_sockets(staff_t)
 ')
 
@@ -147,16 +143,16 @@ optional_policy(`
 ')
 
 optional_policy(`
-    container_stream_connect(staff_t)
-    container_runtime_exec(staff_t)
+	container_stream_connect(staff_t)
+	container_runtime_exec(staff_t)
 ')
 
 optional_policy(`
-    dirsrv_stream_connect(staff_t)
-    dirsrv_manage_log(staff_t)
-    dirsrv_manage_var_lib(staff_t)
-    dirsrv_manage_var_run(staff_t)
-    dirsrv_manage_config(staff_t)
+	dirsrv_stream_connect(staff_t)
+	dirsrv_manage_log(staff_t)
+	dirsrv_manage_var_lib(staff_t)
+	dirsrv_manage_var_run(staff_t)
+	dirsrv_manage_config(staff_t)
 ')
 
 optional_policy(`
@@ -180,8 +176,8 @@ optional_policy(`
 ')
 
 optional_policy(`
-    fwupd_dbus_chat(staff_t)
-    fwupd_read_cache_files(staff_t)
+	fwupd_dbus_chat(staff_t)
+	fwupd_read_cache_files(staff_t)
 ')
 
 optional_policy(`
@@ -205,20 +201,20 @@ optional_policy(`
 ')
 
 optional_policy(`
-    kpatch_run(staff_t, staff_r)
+	kpatch_run(staff_t, staff_r)
 ')
 
 optional_policy(`
-    iotop_run(staff_t, staff_r)
+	iotop_run(staff_t, staff_r)
 ')
 
 optional_policy(`
 	iptables_systemctl(staff_t)
-    iptables_run(staff_t, staff_r)
+	iptables_run(staff_t, staff_r)
 ')
 
 optional_policy(`
-    iotop_run(staff_t, staff_r)
+	iotop_run(staff_t, staff_r)
 ')
 
 optional_policy(`
@@ -239,11 +235,7 @@ optional_policy(`
 ')
 
 optional_policy(`
-    mandb_map_cache_files(staff_t)
-')
-
-optional_policy(`
-	miscfiles_mounton_fonts_cache_dirs(staff_t)
+	mandb_map_cache_files(staff_t)
 ')
 
 optional_policy(`
@@ -286,7 +278,7 @@ optional_policy(`
 ')
 
 optional_policy(`
-    openvpn_exec(staff_t)
+	openvpn_exec(staff_t)
 ')
 
 optional_policy(`
@@ -324,8 +316,7 @@ optional_policy(`
 optional_policy(`
 	sysadm_role_change(staff_r)
 	userdom_dontaudit_use_user_terminals(staff_t)
-    userdom_dontaudit_read_admin_home_files(staff_t)
-	userdom_mounton_tmp_files(staff_t)
+	userdom_dontaudit_read_admin_home_files(staff_t)
 ')
 
 optional_policy(`
@@ -371,6 +362,10 @@ optional_policy(`
 ')
 
 optional_policy(`
+	udev_exec(staff_t)
+')
+
+optional_policy(`
 	userhelper_console_role_template(staff, staff_r, staff_t)
 ')
 
@@ -394,7 +389,7 @@ optional_policy(`
 ')
 
 optional_policy(`
-    vmtools_run_helper(staff_t, staff_r)
+	vmtools_run_helper(staff_t, staff_r)
 ')
 
 optional_policy(`
@@ -406,8 +401,8 @@ optional_policy(`
 ')
 
 optional_policy(`
-    wireshark_role(staff_r, staff_t)
-    wireshark_rw_shm(staff_t)
+	wireshark_role(staff_r, staff_t)
+	wireshark_rw_shm(staff_t)
 ')
 
 optional_policy(`

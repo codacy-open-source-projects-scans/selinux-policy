@@ -18,12 +18,12 @@
 template(`kismet_role',`
 	gen_require(`
 		type kismet_exec_t, kismet_home_t, kismet_tmp_t;
-		type kistmet_tmpfs_t, kismet_t;
+		type kismet_tmpfs_t, kismet_t;
 	')
 
 	kismet_run($1, $2)
 
-	allow $2 kistmet_t:process { ptrace signal_perms };
+	allow $2 kismet_t:process { ptrace signal_perms };
 	ps_process_pattern($2, kismet_t)
 
 	allow $2 kismet_home_t:dir { manage_dir_perms relabel_dir_perms };
@@ -43,9 +43,9 @@ template(`kismet_role',`
 ##	Execute a domain transition to run kismet.
 ## </summary>
 ## <param name="domain">
-## <summary>
+##	<summary>
 ##	Domain allowed to transition.
-## </summary>
+##	</summary>
 ## </param>
 #
 interface(`kismet_domtrans',`
@@ -303,7 +303,7 @@ interface(`kismet_admin',`
 
 	files_search_pids($1)
 	admin_pattern($1, kismet_var_run_t)
-	
+
 	logging_search_logs($1)
 	admin_pattern($1, kismet_log_t)
 

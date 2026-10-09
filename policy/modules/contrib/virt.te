@@ -6,173 +6,173 @@ policy_module(virt, 1.5.0)
 #
 
 ## <desc>
-## <p>
-## Allow confined virtual guests to use serial/parallel communication ports
-## </p>
+##	<p>
+##	Allow confined virtual guests to use serial/parallel communication ports
+##	</p>
 ## </desc>
 gen_tunable(virt_use_comm, false)
 
 ## <desc>
-## <p>
-## Allow virtual processes to run as userdomains
-## </p>
+##	<p>
+##	Allow virtual processes to run as userdomains
+##	</p>
 ## </desc>
 gen_tunable(virt_transition_userdomain, false)
 
 ## <desc>
-## <p>
-## Allow confined virtual guests to use executable memory and executable stack
-## </p>
+##	<p>
+##	Allow confined virtual guests to use executable memory and executable stack
+##	</p>
 ## </desc>
 gen_tunable(virt_use_execmem, false)
 
 ## <desc>
-## <p>
-## Allow virtqemu driver to use executable memory and executable stack
-## </p>
+##	<p>
+##	[Obsolete]Allow virtqemu driver to use executable memory and executable stack
+##	</p>
 ## </desc>
 gen_tunable(virtqemud_use_execmem, true)
 
 ## <desc>
-## <p>
-## Allow confined virtual guests to read fuse files
-## </p>
+##	<p>
+##	Allow confined virtual guests to read fuse files
+##	</p>
 ## </desc>
 gen_tunable(virt_use_fusefs, false)
 
 ## <desc>
-## <p>
-## Allow confined virtual guests to use glusterd
-## </p>
+##	<p>
+##	Allow confined virtual guests to use glusterd
+##	</p>
 ## </desc>
 gen_tunable(virt_use_glusterd, false)
 
 ## <desc>
-## <p>
-## Allow sandbox containers to share apache content
-## </p>
+##	<p>
+##	Allow sandbox containers to share apache content
+##	</p>
 ## </desc>
 gen_tunable(virt_sandbox_share_apache_content, false)
 
 ## <desc>
-## <p>
-## Allow sandbox containers manage fuse files
-## </p>
+##	<p>
+##	Allow sandbox containers manage fuse files
+##	</p>
 ## </desc>
 gen_tunable(virt_sandbox_use_fusefs, false)
 
 ## <desc>
-## <p>
-## Allow confined virtual guests to manage nfs files
-## </p>
+##	<p>
+##	Allow confined virtual guests to manage nfs files
+##	</p>
 ## </desc>
 gen_tunable(virt_use_nfs, false)
 
 ## <desc>
-## <p>
-## Allow confined virtual guests to manage cifs files
-## </p>
+##	<p>
+##	Allow confined virtual guests to manage cifs files
+##	</p>
 ## </desc>
 gen_tunable(virt_use_samba, false)
 
 ## <desc>
-## <p>
-## Allow confined virtual guests to interact with the sanlock
-## </p>
+##	<p>
+##	Allow confined virtual guests to interact with the sanlock
+##	</p>
 ## </desc>
 gen_tunable(virt_use_sanlock, false)
 
 ## <desc>
-## <p>
-## Allow confined virtual guests to interact with rawip sockets
-## </p>
+##	<p>
+##	Allow confined virtual guests to interact with rawip sockets
+##	</p>
 ## </desc>
 gen_tunable(virt_use_rawip, false)
 
 ## <desc>
-## <p>
-## Allow confined virtual guests to interact with the xserver
-## </p>
+##	<p>
+##	Allow confined virtual guests to interact with the xserver
+##	</p>
 ## </desc>
 gen_tunable(virt_use_xserver, false)
 
 ## <desc>
-## <p>
-## Allow confined virtual guests to use usb devices
-## </p>
+##	<p>
+##	Allow confined virtual guests to use usb devices
+##	</p>
 ## </desc>
 gen_tunable(virt_use_usb, true)
 
 ## <desc>
-## <p>
-## Allow confined virtual guests to use smartcards
-## </p>
+##	<p>
+##	Allow confined virtual guests to use smartcards
+##	</p>
 ## </desc>
 gen_tunable(virt_use_pcscd, false)
 
 ## <desc>
-## <p>
-## Allow confined virtual guests to use pulseaudio
-## </p>
+##	<p>
+##	Allow confined virtual guests to use pulseaudio
+##	</p>
 ## </desc>
 gen_tunable(virt_use_pulseaudio, false)
 
 ## <desc>
-## <p>
-## Allow sandbox containers to send audit messages
-## </p>
+##	<p>
+##	Allow sandbox containers to send audit messages
+##	</p>
 ## </desc>
 gen_tunable(virt_sandbox_use_audit, true)
 
 ## <desc>
-## <p>
-## Allow sandbox containers to use netlink system calls
-## </p>
+##	<p>
+##	Allow sandbox containers to use netlink system calls
+##	</p>
 ## </desc>
 gen_tunable(virt_sandbox_use_netlink, false)
 
 # The following three tunables are not used anywhere in selinux-policy,
 # but they are referred to from container-selinux
 # virt_sandbox_use_sys_admin virt_sandbox_use_mknod virt_sandbox_use_all_caps
- 
+
 ## <desc>
-## <p>
-## Allow sandbox containers to use sys_admin system calls, for example mount
-## </p>
+##	<p>
+##	Allow sandbox containers to use sys_admin system calls, for example mount
+##	</p>
 ## </desc>
 gen_tunable(virt_sandbox_use_sys_admin, false)
 
 ## <desc>
-## <p>
-## Allow sandbox containers to use mknod system calls
-## </p>
+##	<p>
+##	Allow sandbox containers to use mknod system calls
+##	</p>
 ## </desc>
 gen_tunable(virt_sandbox_use_mknod, false)
 
 ## <desc>
-## <p>
-## Allow sandbox containers to use all capabilities
-## </p>
+##	<p>
+##	Allow sandbox containers to use all capabilities
+##	</p>
 ## </desc>
 gen_tunable(virt_sandbox_use_all_caps, true)
 
 ## <desc>
-## <p>
-## Allow virtlockd read and lock block devices.
-## </p>
+##	<p>
+##	Allow virtlockd read and lock block devices.
+##	</p>
 ## </desc>
 gen_tunable(virt_lockd_blk_devs, false)
 
 ## <desc>
-## <p>
-## Allow virt daemons run unconfined hooks
-## </p>
+##	<p>
+##	Allow virt daemons run unconfined hooks
+##	</p>
 ## </desc>
 gen_tunable(virt_hooks_unconfined, false)
 
 gen_require(`
-    class passwd rootok;
-    class passwd passwd;
+	class passwd rootok;
+	class passwd passwd;
 ')
 
 attribute virsh_transition_domain;
@@ -582,7 +582,8 @@ optional_policy(`
 # fsetid - for chmod'ing its runtime files
 allow virtd_t self:capability { chown dac_read_search fowner fsetid ipc_lock kill mknod net_admin net_raw setgid setpcap setuid sys_admin sys_nice sys_ptrace };
 #allow virtd_t self:capability2 compromise_kernel;
-allow virtd_t self:process { execmem getcap getsched setcap setexec setfscreate setsched setsockcreate sigkill signal signull };
+allow virtd_t self:process { getcap getsched setcap setexec setfscreate setsched setsockcreate sigkill signal signull };
+dontaudit virtd_t self:process execmem;
 ifdef(`hide_broken_symptoms',`
 	# caused by some bogus kernel code
 	dontaudit virtd_t self:capability { sys_module };
@@ -1218,6 +1219,8 @@ tunable_policy(`virt_use_fusefs',`
 	fs_manage_fusefs_files(virt_domain)
 	fs_read_fusefs_symlinks(virt_domain)
 	fs_getattr_fusefs(virt_domain)
+
+	fs_getattr_fusefs(virtqemud_t)
 ')
 
 tunable_policy(`virt_use_nfs',`
@@ -1363,7 +1366,7 @@ optional_policy(`
 ')
 
 optional_policy(`
-        qgs_stream_connect(svirt_t)
+	qgs_stream_connect(svirt_t)
 ')
 
 ########################################
@@ -1503,16 +1506,24 @@ optional_policy(`
 optional_policy(`
 	ssh_basic_client_template(virsh, virsh_t, system_r)
 
+	allow virsh_t virsh_ssh_t:process signal;
+	dontaudit virsh_ssh_t virsh_transition_domain:fifo_file rw_inherited_fifo_file_perms;
+
 	kernel_read_xen_state(virsh_ssh_t)
 	kernel_write_xen_state(virsh_ssh_t)
 
-	dontaudit virsh_ssh_t virsh_transition_domain:fifo_file rw_inherited_fifo_file_perms;
 	files_search_tmp(virsh_ssh_t)
 
 	fs_manage_xenfs_dirs(virsh_ssh_t)
 	fs_manage_xenfs_files(virsh_ssh_t)
 
-	userdom_search_admin_dir(virsh_ssh_t)
+	optional_policy(`
+		kerberos_search_keytab(virsh_ssh_t)
+	')
+
+	optional_policy(`
+		userdom_search_admin_dir(virsh_ssh_t)
+	')
 ')
 
 optional_policy(`
@@ -1808,7 +1819,7 @@ tunable_policy(`virt_sandbox_use_fusefs',`
 ')
 
 optional_policy(`
-tunable_policy(`virt_sandbox_share_apache_content',`
+	tunable_policy(`virt_sandbox_share_apache_content',`
 		apache_exec_modules(svirt_sandbox_domain)
 		apache_read_sys_content(svirt_sandbox_domain)
 	')
@@ -1917,6 +1928,8 @@ tunable_policy(`virt_sandbox_use_audit',`
 # virt_driver_domain local policy (common rules)
 #
 
+dontaudit virt_driver_domain self:process execmem;
+
 manage_files_pattern(virt_driver_domain, virt_log_t, virt_log_t)
 
 optional_policy(`
@@ -2019,7 +2032,7 @@ optional_policy(`
 ')
 
 optional_policy(`
-        firewalld_dbus_chat(virtnetworkd_t)
+	firewalld_dbus_chat(virtnetworkd_t)
 ')
 
 #######################################
@@ -2077,7 +2090,7 @@ allow virtnwfilterd_t self:capability net_raw;
 allow virtnwfilterd_t self:netlink_generic_socket create_socket_perms;
 allow virtnwfilterd_t self:netlink_netfilter_socket create_socket_perms;
 allow virtnwfilterd_t self:netlink_rdma_socket create_socket_perms;
-allow virtnwfilterd_t self:packet_socket { bind create getopt ioctl map setopt };
+allow virtnwfilterd_t self:packet_socket create_socket_perms;
 allow virtnwfilterd_t self:rawip_socket create_socket_perms;
 
 manage_dirs_pattern(virtnwfilterd_t, virt_var_run_t, virt_var_run_t)
@@ -2145,6 +2158,10 @@ optional_policy(`
 	dnsmasq_filetrans_named_content_fromdir(virtproxyd_t, virtproxyd_var_run_t)
 ')
 
+optional_policy(`
+	systemd_homed_stream_connect(virtproxyd_t)
+')
+
 #######################################
 #
 # virtqemud local policy
@@ -2197,6 +2214,7 @@ delete_lnk_files_pattern(virtqemud_t, virt_etc_rw_t, virt_etc_rw_t)
 manage_files_pattern(virtqemud_t, virtqemud_lock_t, virtqemud_lock_t)
 files_lock_filetrans(virtqemud_t, virtqemud_lock_t, file)
 
+allow virtqemud_t self:fifo_file relabelfrom;
 allow virtqemud_t virtqemud_var_run_t:dir relabelfrom;
 allow virtqemud_t virtqemud_var_run_t:sock_file relabelfrom;
 allow virtqemud_t virt_log_t:file relabel_file_perms;
@@ -2333,9 +2351,7 @@ sysnet_manage_config(virtqemud_t)
 term_use_generic_ptys(virtqemud_t)
 term_use_ptmx(virtqemud_t)
 
-tunable_policy(`virtqemud_use_execmem',`
-	allow virtqemud_t self:process { execmem execstack };
-')
+udev_domtrans(virtqemud_t)
 
 tunable_policy(`virt_use_nfs',`
 	fs_manage_nfs_dirs(virtqemud_t)
@@ -2359,6 +2375,10 @@ optional_policy(`
 
 optional_policy(`
 	insights_core_read_state(virtqemud_t)
+')
+
+optional_policy(`
+	modutils_domtrans_kmod(virtqemud_t)
 ')
 
 optional_policy(`
@@ -2414,6 +2434,10 @@ optional_policy(`
 
 optional_policy(`
 	systemd_homed_stream_connect(virtqemud_t)
+')
+
+optional_policy(`
+	udev_domtrans(virtqemud_t)
 ')
 
 optional_policy(`
@@ -2491,6 +2515,7 @@ fs_getattr_configfs_dirs(virtstoraged_t)
 
 storage_raw_read_fixed_disk(virtstoraged_t)
 storage_raw_write_fixed_disk(virtstoraged_t)
+storage_setattr_fixed_disk_dev(virtstoraged_t)
 
 userdom_read_user_home_content_files(virtstoraged_t)
 
@@ -2500,6 +2525,10 @@ optional_policy(`
 
 optional_policy(`
 	fstools_domtrans(virtstoraged_t)
+')
+
+optional_policy(`
+	iscsid_domtrans(virtstoraged_t)
 ')
 
 optional_policy(`
